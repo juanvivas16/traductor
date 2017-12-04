@@ -155,6 +155,12 @@ asignacion:
 	;
 %%
 
+void yyerror(const char *s)
+{
+	cout<<"***ERROR: Mensaje: "<<s<<". Linea: "<<lineas<<"***"<<endl;
+	exit(-1);
+}
+
 int main(int argc, char **argv)
 {
 	if(argc != 2)
@@ -169,12 +175,8 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	yyin = archivo;
+	cargar_reservada();
+	cargar_reservada_tipo();
 	yyparse();
 	cout<<"EXITO: Parsing Correcto."<<endl;
-}
-
-void yyerror(const char *s)
-{
-	cout<<"***ERROR: Mensaje: "<<s<<". Linea: "<<lineas<<"***"<<endl;
-	exit(-1);
 }
