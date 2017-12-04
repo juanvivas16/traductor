@@ -1,8 +1,8 @@
 CXX = g++
 
-BISON= bison -d
+BISON = bison -d
 
-FLEX= flex
+FLEX = flex
 
 all: clean bison flex parser
 
@@ -26,4 +26,3 @@ source2:
 
 source3:
 	$(CXX) source3.c -o s3.out
-

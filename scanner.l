@@ -4,21 +4,28 @@
 	#include <iostream>
 	#include <cstdio>
 	#include <list>
+	#include <cctype>
+	#include <cstring>
+  #include <string>
+	#include <cstdlib>
 	#include "parser.tab.h"
 
 	using namespace std;
 
 	int lineas = 1;
 	list<char *> reservada_tipo;
-	list<char *> reservada();
+	list<char *> reservada;
+	bool retornar = false;
+	bool comilla = true;
 
 	void cargar_reservada_tipo();
-	bool esta_reservada_tipo(char *f);
+	bool esta_reservada_tipo(char *rt);
 	void imprimir_reservada_tipo();
 	void eliminar_reservada_tipo();
 
 	void cargar_reservada();
-	bool esta_reservada(char *f);
+	bool esta_reservada(char *r);
+	int posicion_reservada(char *r);
 	void imprimir_reservada();
 	void eliminar_reservada();
 
@@ -26,11 +33,88 @@
 
 %x comentario
 %x comentariosimple
+%x secomillas
 
 DIGITO	[0-9]
 NUMERO	{DIGITO}+
 
 %%
+
+[a-zA-Z_][a-zA-Z_0-9]*	{
+
+										yylval.strval=strdup(yytext);
+
+										if(esta_reservada_tipo(yytext))
+											return TIPO;
+
+										else if(esta_reservada(yytext))
+											return (posicion_reservada(yytext) + 258);
+
+										else
+											return ID;
+				}
+
+{NUMERO}		{yylval.ival=atoi(yytext); return NUM;}
+
+"."       	{return PUNTO;}
+";"					{return PTOCOMA;}
+"{"					{return LLAVEABR;}
+"}"					{return LLAVECERR;}
+"("					{return PARENTESISABR;}
+")"					{return PARENTESISCERR;}
+"<"					{return MENOR;}
+">"					{return MAYOR;}
+"!"					{return EXCL;}
+"="					{return IGUAL;}
+"+"					{return SUMA;}
+"-"					{return MENOS;}
+"*"					{return MULTI;}
+"/"					{return DIV;}
+"^"					{return POTEN;}
+":"					{return DOSPTOS;}
+"#"					{return NUMERAL;}
+"&"					{return AMPERSAND;}
+"<="				{return MENOR_I;}
+">="				{return MAYOR_I;}
+"||"				{return OR;}
+"&&"				{return AND;}
+"\%"				{return PORCENTAJE;}
+","					{return COMA;}
+[ \t]				{}
+"\n" 				{lineas++;}
+
+"\""	{
+				if(comilla)
+      	{
+      		yyless(0);
+	        comilla = false;
+	        return COMILLAS;
+	      }else
+	      	comilla = true;
+
+				retornar = true;
+	      BEGIN(secomillas);
+	     }
+
+      <secomillas>"\"" {
+				if(retornar)
+	      {
+	      	yyless(0);
+	        retornar = false;
+	        return TEXTO;
+	      }
+				if(comilla)
+	      {
+	      	yyless(0);
+	        comilla = false;
+	        return COMILLAS;
+	      }else
+	      	comilla = true;
+
+					BEGIN(0);
+	      }
+      <secomillas>"\n" {}
+      <secomillas>. {}
 
 "/*"  {BEGIN(comentario);}
 			<comentario>"*/"	{BEGIN(INITIAL);}
@@ -41,44 +125,7 @@ NUMERO	{DIGITO}+
 			<comentariosimple>"\n"	{lineas++; BEGIN(INITIAL);}
 			<comentariosimple>.	{}
 
-[a-zA-Z_][a-zA-Z_0-9]*	{
-
-										yylval.strval=strdup(yytext);
-
-										if(esta_reservada_tipo(yytext))
-											return TIPO;
-										else if(esta_reservada(yytext))
-											return RESERVADA;
-
-										return ID;
-				}
-
-{NUMERO}		{cout<<"Numero"<<endl; yylval.ival=atoi(yytext); return NUM;}
-
-"."       	{cout<<"punto"<<endl; return PUNTO;}
-";"					{cout<<"ptcoma"<<endl; return PTOCOMA;}
-"{"					{cout<<"llaveabr"<<endl; return LLAVEABR;}
-"}"					{cout<<"llavecerr"<<endl; return LLAVECERR;}
-"("					{cout<<"parentesis abriendo"<<endl; return PARENTESISABR;}
-")"					{cout<<"parentesis cerrando"<<endl; return PARENTESISCERR;}
-"<"					{cout<<"corchete angular abriendo"<<endl; return CORAABR;}
-">"					{cout<<"corchete angular cerrando"<<endl; return CORACERR;}
-"!"					{cout<<"exclamancion"<<endl; return EXCL;}
-"="					{cout<<"igual"<<endl; return IGUAL;}
-"+"					{cout<<"suma"<<endl; return SUMA;}
-"-"					{cout<<"menos"<<endl; return MENOS;}
-"*"					{cout<<"multi"<<endl; return MULTI;}
-"/"					{cout<<"division"<<endl; return DIV;}
-"^"					{cout<<"poten"<<endl; return POTEN;}
-":"					{cout<<"dosptos"<<endl; return DOSPTOS;}
-"#"					{cout<<"numeral"<<endl; return NUMERAL;}
-"&"					{cout<<"ampersand"<<endl; return AMPERSAND;}
-\" 				  {cout<<"comillas"<<endl; return COMILLAS;}
-\%				  {cout<<"porcentaje"<<endl; return PORCENTAJE;}
-","					{cout<<"coma"<<endl; return COMA;}
-[ \t]				{}
-"\n" 				lineas++;
-.						{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
+.
 
 %%
 
@@ -97,12 +144,12 @@ void cargar_reservada_tipo()
 	reservada_tipo.push_back(rt3);
 }
 
-bool esta_reservada_tipo(char *f)
+bool esta_reservada_tipo(char *r)
 {
 	list<char *>::iterator it = reservada_tipo.begin();
 
 	for(it; it != reservada_tipo.end(); it++)
-		if(!strcmp(f,*it))
+		if(!strcmp(r,*it))
 			return true;
 
 	return false;
@@ -134,6 +181,10 @@ void cargar_reservada()
 	strcpy(r2,"printf");
 	reservada.push_back(r2);
 
+	char *r3 = (char *)malloc(strlen("scanf"));
+	strcpy(r3,"scanf");
+	reservada.push_back(r3);
+
 	char *r4 = (char *)malloc(strlen("main"));
 	strcpy(r4,"main");
 	reservada.push_back(r4);
@@ -163,15 +214,29 @@ void cargar_reservada()
 	reservada.push_back(r10);
 }
 
-bool esta_reservada(char *f)
+bool esta_reservada(char *r)
 {
 	list<char *>::iterator it = reservada.begin();
 
 	for(it; it != reservada.end(); it++)
-		if(!strcmp(f,*it))
+		if(!strcmp(r,*it))
 			return true;
 
 	return false;
+}
+
+int posicion_reservada(char *r)
+{
+	list<char *>::iterator it = reservada.begin();
+	int pos = 1;
+
+	for(it; it != reservada.end(); it++)
+	{
+			if(strcmp(r, *it))
+				return pos;
+
+			pos++;
+	}
 }
 
 void imprimir_reservada()
