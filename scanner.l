@@ -15,8 +15,6 @@
 	int lineas = 1;
 	list<char *> reservada_tipo;
 	list<char *> reservada;
-	bool retornar = false;
-	bool comilla = true;
 
 	void cargar_reservada_tipo();
 	bool esta_reservada_tipo(char *rt);
@@ -76,6 +74,7 @@ NUMERO	{DIGITO}+
 "&"					{return AMPERSAND;}
 "<="				{return MENOR_I;}
 ">="				{return MAYOR_I;}
+"!="				{return DIST;}
 "||"				{return OR;}
 "&&"				{return AND;}
 "\%"				{return PORCENTAJE;}
@@ -83,37 +82,11 @@ NUMERO	{DIGITO}+
 [ \t]				{}
 "\n" 				{lineas++;}
 
-"\""	{
-				if(comilla)
-      	{
-      		yyless(0);
-	        comilla = false;
-	        return COMILLAS;
-	      }else
-	      	comilla = true;
-
-				retornar = true;
-	      BEGIN(secomillas);
-	     }
-
-      <secomillas>"\"" {
-				if(retornar)
-	      {
-	      	yyless(0);
-	        retornar = false;
-	        return TEXTO;
-	      }
-				if(comilla)
-	      {
-	      	yyless(0);
-	        comilla = false;
-	        return COMILLAS;
-	      }else
-	      	comilla = true;
-
-					BEGIN(0);
-	      }
-      <secomillas>"\n" {}
+"\""	{return COMILLAS; BEGIN(secomillas);}
+      <secomillas>"\"" {return COMILLAS; BEGIN(INITIAL);}
+      <secomillas>"\n" { }
+			<secomillas>[A-Za-z0-9.-_ ]+ {return TEXTO;}
+			<secomillas>"%"[dfc]+ {return PRCVAL;}
       <secomillas>. {}
 
 "/*"  {BEGIN(comentario);}
@@ -228,7 +201,7 @@ bool esta_reservada(char *r)
 int posicion_reservada(char *r)
 {
 	list<char *>::iterator it = reservada.begin();
-	int pos = 1;
+	int pos = 0;
 
 	for(it; it != reservada.end(); it++)
 	{

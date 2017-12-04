@@ -14,8 +14,6 @@
 	int lineas = 1;
 	list<char *> reservada_tipo;
 	list<char *> reservada;
-  bool retornar = false;
-  bool comilla = true;
 
 	void cargar_reservada_tipo();
 	bool esta_reservada_tipo(char *rt);
@@ -33,6 +31,7 @@
 %x comentario
 %x comentariosimple
 %x secomillas
+%x porcentajeval
 
 DIGITO	[0-9]
 NUMERO	{DIGITO}+
@@ -69,6 +68,11 @@ NUMERO	{DIGITO}+
 ":"					{cout<<"dosptos"<<endl;}
 "#"					{cout<<"numeral"<<endl;}
 "&"					{cout<<"ampersand"<<endl;}
+"<="				{cout<<"MENOR_I"<<endl;;}
+">="				{cout<<"MAYOR_I"<<endl;}
+"!="				{cout<<"DIST"<<endl;}
+"||"				{cout<<"OR"<<endl;;}
+"&&"				{cout<<"AND"<<endl;}
 \%				  {cout<<"porcentaje"<<endl;}
 ","					{cout<<"coma"<<endl;}
 [ \t]				{ }
@@ -83,41 +87,16 @@ NUMERO	{DIGITO}+
 			<comentariosimple>"\n"	{lineas++; BEGIN(INITIAL);}
 			<comentariosimple>.	{ }
 
-"\""	{
-        if(comilla)
-        {
-          yyless(0);
-        	comilla = false;
-        	cout<<"comillas"<<endl;
-        }else
-        	comilla = true;
+"\""	{cout<<"comillas UNO"<<endl; BEGIN(secomillas);}
+			<secomillas>"\"" {cout<<"comillas DOS"<<endl; BEGIN(INITIAL);}
+			<secomillas>[A-Za-z0-9.-_, ]+ {cout<<"texto"<<endl;}
+			<secomillas>"\%"[a-zA-Z]+ {cout<<"Pocentaje D"<<endl; BEGIN(porcentajeval);}
+			<porcentajeval>"\%" {cout<<"PORCENTPRINT"<<endl;}
+			<porcentajeval>[dfc]+ {cout<<"valores"<<endl; BEGIN(porcentajeval);}
+			<secomillas>"\n" { }
+			<secomillas>. { }
 
-        retornar = true;
-        BEGIN(secomillas);
-      }
-
-      <secomillas>"\"" {
-        if(retornar)
-        {
-        	yyless(0);
-        	retornar = false;
-        	cout<<"texto"<<endl;
-        }
-
-        if(comilla)
-        {
-        	yyless(0);
-        	comilla = false;
-        	cout<<"comillas"<<endl;
-        }else
-        	 comilla = true;
-
-        BEGIN(INITIAL);
-        }
-      <secomillas>"\n" { }
-      <secomillas>. { }
-
-.						{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
+.			{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
 
 %%
 
@@ -220,7 +199,7 @@ bool esta_reservada(char *r)
 int posicion_reservada(char *r)
 {
 	list<char *>::iterator it = reservada.begin();
-	int pos = 1;
+	int pos = 0;
 
 	for(it; it != reservada.end(); it++)
 	{

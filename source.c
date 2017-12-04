@@ -1,11 +1,10 @@
 #include <cctype>
-#include "hola.h"
+#include "1h.h"
 
 int main()
 {
-  scanf("%d", &N);
+  int N = 3;
   printf("La serie con %d terminos es: \n", N);
-
 
 return 0;
 

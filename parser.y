@@ -9,7 +9,6 @@
 
 	using namespace std;
 
-	int cantErrores = 0;
 	extern int lineas;
 	extern int yyparse();
 	extern int yylex();
@@ -50,7 +49,6 @@
 %token DO
 %token WHILE
 %token FOR
-%token TEXTO
 %token PUNTO
 %token PTOCOMA
 %token LLAVEABR
@@ -71,11 +69,14 @@
 %token AMPERSAND
 %token MENOR_I
 %token MAYOR_I
+%token DIST
 %token OR
 %token AND
 %token COMILLAS
 %token PORCENTAJE
 %token COMA
+%token TEXTO
+%token PRCVAL
 %token<strval> TIPO
 %token<strval> ID
 %token<ival>	NUM
