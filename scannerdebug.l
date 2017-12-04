@@ -71,24 +71,24 @@ NUMERO	{DIGITO}+
 "&"					{cout<<"ampersand"<<endl;}
 \%				  {cout<<"porcentaje"<<endl;}
 ","					{cout<<"coma"<<endl;}
-[ \t]				{}
+[ \t]				{ }
 "\n" 				{lineas++;}
 
 "/*"  {BEGIN(comentario);}
 			<comentario>"*/"	{BEGIN(INITIAL);}
 			<comentario>[\n\t]	{lineas++;}
-			<comentario>.	{}
+			<comentario>.	{ }
 
 "//"	{BEGIN(comentariosimple);}
 			<comentariosimple>"\n"	{lineas++; BEGIN(INITIAL);}
-			<comentariosimple>.	{}
+			<comentariosimple>.	{ }
 
 "\""	{
         if(comilla)
         {
           yyless(0);
         	comilla = false;
-        	cout<<"comillas"<<endl;
+        	cout<<"comillasPEG1"<<endl;
         }else
         	comilla = true;
 
@@ -108,14 +108,14 @@ NUMERO	{DIGITO}+
         {
         	yyless(0);
         	comilla = false;
-        	cout<<"comillas"<<endl;
+        	cout<<"comillasPEG2"<<endl;
         }else
         	 comilla = true;
 
         BEGIN(INITIAL);
         }
-      <secomillas>[\n] {}
-      <secomillas>. {}
+      <secomillas>[\n] { }
+      <secomillas>. { }
 
 .						{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
 

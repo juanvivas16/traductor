@@ -15,6 +15,7 @@
 	extern int yylex();
 	extern FILE *yyin;
 	extern list<char *> reservada_tipo;
+	extern list<char *> reservada;
 	void yyerror(const char *);
 
 	extern bool esta_reservada_tipo(char *);
@@ -136,12 +137,13 @@ cuerpo:
 retornar:
 	RETURN NUM PTOCOMA
 	|
-	RETURN LLAVEABR NUM LLAVECERR PTOCOMA
+	RETURN PARENTESISABR NUM PARENTESISCERR PTOCOMA
 	|
 	RETURN ID PTOCOMA
 	|
-	RETURN LLAVEABR ID LLAVECERR PTOCOMA
-;
+	RETURN PARENTESISABR ID PARENTESISCERR PTOCOMA
+	;
+
 declaracion:
 	TIPO ID PTOCOMA
 	;
@@ -168,15 +170,19 @@ int main(int argc, char **argv)
 		cout<<"ERROR: Archivo invalido"<<endl;
 		return -1;
 	}
+
 	FILE *archivo = fopen(argv[1],"r");
+
 	if(!archivo)
 	{
 		printf("ERROR: No se puedo abrir el archivo");
 		return -1;
 	}
+
 	yyin = archivo;
 	cargar_reservada();
 	cargar_reservada_tipo();
 	yyparse();
+
 	cout<<"EXITO: Parsing Correcto."<<endl;
 }
