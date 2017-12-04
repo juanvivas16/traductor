@@ -88,7 +88,7 @@ NUMERO	{DIGITO}+
         {
           yyless(0);
         	comilla = false;
-        	cout<<"comillasPEG1"<<endl;
+        	cout<<"comillas"<<endl;
         }else
         	comilla = true;
 
@@ -108,13 +108,13 @@ NUMERO	{DIGITO}+
         {
         	yyless(0);
         	comilla = false;
-        	cout<<"comillasPEG2"<<endl;
+        	cout<<"comillas"<<endl;
         }else
         	 comilla = true;
 
         BEGIN(INITIAL);
         }
-      <secomillas>[\n] { }
+      <secomillas>"\n" { }
       <secomillas>. { }
 
 .						{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
