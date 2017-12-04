@@ -1,24 +1,33 @@
 %{
-#include<iostream>
-#include<cstring>
-#include<list>
-#include<cstdlib>
-#include<cstdio>
+	#include <iostream>
+	#include <cstdio>
+	#include <list>
+	#include <cctype>
+	#include <cstring>
+  #include <string>
+	#include <cstdlib>
 
-using namespace std;
+	using namespace std;
 
-int cantErrores = 0;
-extern int lineas;
-extern int yyparse();
-extern int yylex();
-extern FILE *yyin;
-extern list<char *> reservada_tipo;
-void yyerror(const char *);
-extern bool esta_reservada_tipo(char *);
-extern void cargar_reservada_tipo();
-extern void eliminar_reservada();
-extern bool esta_reservada(char *);
-extern void cargar_reservada();
+	int cantErrores = 0;
+	extern int lineas;
+	extern int yyparse();
+	extern int yylex();
+	extern FILE *yyin;
+	extern list<char *> reservada_tipo;
+	void yyerror(const char *);
+
+	extern bool esta_reservada_tipo(char *);
+	extern void cargar_reservada_tipo();
+	extern void eliminar_reservada();
+	extern bool esta_reservada(char *);
+	extern void cargar_reservada();
+
+	extern void cargar_reservada();
+	extern bool esta_reservada(char *);
+	extern int posicion_reservada(char *);
+	extern void imprimir_reservada();
+	extern void eliminar_reservada();
 
 %}
 
@@ -28,9 +37,7 @@ extern void cargar_reservada();
 	int	ival;
 }
 
-%token<strval> TIPO
-%token<strval> ID
-%token<ival>	NUM
+
 
 %token INCLUDE
 %token PRINT
@@ -42,14 +49,15 @@ extern void cargar_reservada();
 %token DO
 %token WHILE
 %token FOR
+%token TEXTO
 %token PUNTO
 %token PTOCOMA
 %token LLAVEABR
 %token LLAVECERR
 %token PARENTESISABR
 %token PARENTESISCERR
-%token CORAABR
-%token CORACERR
+%token MENOR
+%token MAYOR
 %token EXCL
 %token IGUAL
 %token SUMA
@@ -60,9 +68,16 @@ extern void cargar_reservada();
 %token DOSPTOS
 %token NUMERAL
 %token AMPERSAND
+%token MENOR_I
+%token MAYOR_I
+%token OR
+%token AND
 %token COMILLAS
 %token PORCENTAJE
 %token COMA
+%token<strval> TIPO
+%token<strval> ID
+%token<ival>	NUM
 
 
 %right IGUAL
@@ -77,53 +92,66 @@ extern void cargar_reservada();
 %%
 
 programa:
-	cabecera main
+	cabecera
 	;
+
 cabecera:
-	NUMERAL ID COMILLAS ID PUNTO ID COMILLAS
+	cabecera NUMERAL INCLUDE COMILLAS ID PUNTO ID COMILLAS principal
 	|
-	cabecera NUMERAL ID COMILLAS ID PUNTO ID COMILLAS
-	;
-main:
-	TIPO MAIN PARENTESISABR parametros PARENTESISCERR llaves
-	;
-parametros:
-	TIPO ID COMA TIPO MULTI MULTI ID
+	cabecera NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR principal
 	|
-	%empty
+	cabecera NUMERAL INCLUDE MENOR ID MAYOR principal
+	|
+	NUMERAL INCLUDE COMILLAS ID PUNTO ID COMILLAS principal
+	|
+	NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR principal
+	|
+	NUMERAL INCLUDE MENOR ID MAYOR principal
+	|
+	principal
 	;
-llaves:
-	LLAVEABR cuerpo LLAVECERR
+
+principal:
+	TIPO MAIN PARENTESISABR PARENTESISCERR LLAVEABR cuerpo LLAVECERR
 	;
+
 cuerpo:
-	cuerpo declaracion
+	cuerpo declaracion retornar;
 	|
-	cuerpo estructura
+	cuerpo asignacion retornar;
 	|
-	cuerpo asignacion
+	asignacion retornar;
+	|
+	declaracion retornar;
+	|
+	asignacion
+	|
+	declaracion
+	|
+	retornar
 	|
 	%empty
 	;
+
+retornar:
+	RETURN NUM PTOCOMA
+	|
+	RETURN LLAVEABR NUM LLAVECERR PTOCOMA
+	|
+	RETURN ID PTOCOMA
+	|
+	RETURN LLAVEABR ID LLAVECERR PTOCOMA
+;
 declaracion:
-	TIPO ID IGUAL NUM PTOCOMA
+	TIPO ID PTOCOMA
 	;
-estructura:
-	IF PARENTESISABR ID IGUAL IGUAL NUM PARENTESISCERR llaves
-	|
-	IF PARENTESISABR ID IGUAL IGUAL TIPO PARENTESISCERR llaves
-	|
-	IF PARENTESISABR ID IGUAL IGUAL NUM PARENTESISCERR ID IGUAL NUM PTOCOMA
-	|
-	IF PARENTESISABR ID IGUAL IGUAL TIPO PARENTESISCERR ID IGUAL NUM PTOCOMA
-	|
-	IF PARENTESISABR ID IGUAL IGUAL NUM PARENTESISCERR ID IGUAL TIPO PTOCOMA
-	|
-	IF PARENTESISABR ID IGUAL IGUAL TIPO PARENTESISCERR ID IGUAL TIPO PTOCOMA
-	;
+
 asignacion:
+	ID IGUAL ID PTOCOMA
+	|
 	ID IGUAL NUM PTOCOMA
 	|
-	ID IGUAL TIPO PTOCOMA
+	ID SUMA IGUAL NUM PTOCOMA
 	;
 %%
 
