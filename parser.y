@@ -39,16 +39,16 @@
 
 
 
-%token INCLUDE
-%token PRINT
-%token SCAN
-%token MAIN
-%token RETURN
-%token IF
-%token ELSE
-%token DO
-%token WHILE
-%token FOR
+%token<strval> INCLUDE
+%token<strval> PRINT
+%token<strval> SCAN
+%token<strval> MAIN
+%token<strval> RETURN
+%token<strval> IF
+%token<strval> ELSE
+%token<strval> DO
+%token<strval> WHILE
+%token<strval> FOR
 %token PUNTO
 %token PTOCOMA
 %token LLAVEABR
@@ -72,11 +72,11 @@
 %token DIST
 %token OR
 %token AND
-%token COMILLAS
 %token PORCENTAJE
 %token COMA
-%token TEXTO
-%token PRCVAL
+%token COMISIMPLE
+%token COMILLAS
+%token<strval> PRCVAL
 %token<strval> TIPO
 %token<strval> ID
 %token<ival>	NUM
@@ -94,23 +94,31 @@
 %%
 
 programa:
-	cabecera
+	codigo{
+		imprimir_reservada();
+	}
+	;
+
+codigo:
+	cabecera principal
+	|
+	principal
+	|
+	TIPO INCLUDE
 	;
 
 cabecera:
-	cabecera NUMERAL INCLUDE COMILLAS ID PUNTO ID COMILLAS principal
+	cabecera NUMERAL INCLUDE COMILLAS ID COMILLAS
 	|
-	cabecera NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR principal
+	cabecera NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR
 	|
-	cabecera NUMERAL INCLUDE MENOR ID MAYOR principal
+	cabecera NUMERAL INCLUDE MENOR ID MAYOR
 	|
-	NUMERAL INCLUDE COMILLAS ID PUNTO ID COMILLAS principal
+	NUMERAL INCLUDE COMILLAS ID COMILLAS
 	|
-	NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR principal
+	NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR
 	|
-	NUMERAL INCLUDE MENOR ID MAYOR principal
-	|
-	principal
+	NUMERAL INCLUDE MENOR ID MAYOR
 	;
 
 principal:
@@ -118,10 +126,6 @@ principal:
 	;
 
 cuerpo:
-	cuerpo declaracion retornar;
-	|
-	cuerpo asignacion retornar;
-	|
 	asignacion retornar;
 	|
 	declaracion retornar;
@@ -146,10 +150,18 @@ retornar:
 	;
 
 declaracion:
+	declaracion TIPO ID PTOCOMA
+	|
 	TIPO ID PTOCOMA
 	;
 
 asignacion:
+	asignacion ID IGUAL ID PTOCOMA
+	|
+	asignacion ID IGUAL NUM PTOCOMA
+	|
+	asignacion ID SUMA IGUAL NUM PTOCOMA
+	|
 	ID IGUAL ID PTOCOMA
 	|
 	ID IGUAL NUM PTOCOMA

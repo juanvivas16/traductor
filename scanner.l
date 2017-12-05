@@ -46,8 +46,10 @@ NUMERO	{DIGITO}+
 											return TIPO;
 
 										else if(esta_reservada(yytext))
-											return (posicion_reservada(yytext) + 258);
-
+										{
+											cout<<"Pos"<<posicion_reservada(yytext)<<endl;
+											return (posicion_reservada(yytext));
+										}
 										else
 											return ID;
 				}
@@ -79,14 +81,15 @@ NUMERO	{DIGITO}+
 "&&"				{return AND;}
 "\%"				{return PORCENTAJE;}
 ","					{return COMA;}
+"\'"				{return COMISIMPLE;}
 [ \t]				{}
 "\n" 				{lineas++;}
 
 "\""	{return COMILLAS; BEGIN(secomillas);}
       <secomillas>"\"" {return COMILLAS; BEGIN(INITIAL);}
       <secomillas>"\n" { }
-			<secomillas>[A-Za-z0-9.-_ ]+ {return TEXTO;}
-			<secomillas>"%"[dfc]+ {return PRCVAL;}
+			<secomillas>[A-Za-z0-9.-_ ]+ {return ID;}
+			<secomillas>"%"[dfc] {yylval.strval=strdup(yytext); return PRCVAL;}
       <secomillas>. {}
 
 "/*"  {BEGIN(comentario);}
@@ -201,7 +204,7 @@ bool esta_reservada(char *r)
 int posicion_reservada(char *r)
 {
 	list<char *>::iterator it = reservada.begin();
-	int pos = 0;
+	int pos = 257;
 
 	for(it; it != reservada.end(); it++)
 	{

@@ -87,14 +87,12 @@ NUMERO	{DIGITO}+
 			<comentariosimple>"\n"	{lineas++; BEGIN(INITIAL);}
 			<comentariosimple>.	{ }
 
-"\""	{cout<<"comillas UNO"<<endl; BEGIN(secomillas);}
-			<secomillas>"\"" {cout<<"comillas DOS"<<endl; BEGIN(INITIAL);}
-			<secomillas>[A-Za-z0-9.-_, ]+ {cout<<"texto"<<endl;}
-			<secomillas>"\%"[a-zA-Z]+ {cout<<"Pocentaje D"<<endl; BEGIN(porcentajeval);}
-			<porcentajeval>"\%" {cout<<"PORCENTPRINT"<<endl;}
-			<porcentajeval>[dfc]+ {cout<<"valores"<<endl; BEGIN(porcentajeval);}
-			<secomillas>"\n" { }
-			<secomillas>. { }
+			"\""	{cout<<"COMILLAS1"<<endl; BEGIN(secomillas);}
+			      <secomillas>"\"" {cout<<"COMILLAS2"<<endl; BEGIN(INITIAL);}
+			      <secomillas>"\n" { }
+						<secomillas>[A-Za-z0-9.-_ ]+ {cout<<"TEXTO"<<endl;}
+						<secomillas>"%"[dfc]+ {cout<<"PRCVAL"<<endl;}
+			      <secomillas>. {}
 
 .			{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
 
