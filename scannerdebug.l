@@ -80,7 +80,7 @@ NUMERO	{DIGITO}+
 							if(com == 0 )
 							{
 								com = -1;
-								cout<<"COMILLAS1"<<endl;
+								cout<<"COMILLAS"<<endl;
 							}else
 							{
 							com = 1;
@@ -104,14 +104,15 @@ NUMERO	{DIGITO}+
 			<secomillas>"\"" {if(com == 1)
 												{
 													com = 0;
-													cout<<"COMILLAS2"<<endl;
+													cout<<"COMILLAS"<<endl;
 												}
 												else{
 													yyless(0);
 													BEGIN(INITIAL);
 													}}
+				<secomillas>"\%"[dfc] {cout<<"PRCVAL"<<endl;}
 				<secomillas>[A-Za-z0-9.-_, ]+ {cout<<"TEXTO"<<endl;}
-				<secomillas>"%"[dfc] {cout<<"PRCVAL"<<endl;}
+
 
 .			{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
 

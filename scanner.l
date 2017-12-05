@@ -115,8 +115,9 @@ NUMERO	{DIGITO}+
 													yyless(0);
 													BEGIN(INITIAL);
 													}}
-				<secomillas>[A-Za-z0-9.-_, ]+ {yylval.strval=strdup(yytext); return TEXTO;}
 				<secomillas>"%"[dfc] {yylval.strval=strdup(yytext); return PRCVAL;}
+				<secomillas>[A-Za-z0-9.-_, ]+ {return TEXTO;}
+
 .
 
 %%

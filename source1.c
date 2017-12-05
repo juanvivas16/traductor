@@ -1,14 +1,8 @@
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--- Primer Ejercicio del Proyecto
--- Alumnos: Juan Vivas
---			Julián Briceño
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char **argv)
+int main()
 {
-
 	// Declaracion de las variables
 	int n = 0;
 	int i = 1;
