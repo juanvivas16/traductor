@@ -82,16 +82,17 @@ NUMERO	{DIGITO}+
 "\%"				{return PORCENTAJE;}
 ","					{return COMA;}
 "\'"				{return COMISIMPLE;}
-"\""					{
+"\""				{
 							if(com ==0 )
 							{
 								com = -1;
 								return COMILLAS;
-							}
+							}else
+							{
 							com = 1;
 							yyless(0);
 							BEGIN(secomillas);
-						}
+						}}
 
 [ \t]				{}
 "\n" 				{lineas++;}

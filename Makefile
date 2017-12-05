@@ -4,7 +4,7 @@ BISON = bison -d
 
 FLEX = flex
 
-all: clean bison flex parser source1 source2 source3
+all: clean bison flex parser source1 source2 source3 flexdebug scanner
 
 clean:
 	rm -f lex.yy.c parser parser.tab.c parser.tab.h scanner *.out
@@ -14,6 +14,12 @@ bison:
 
 flex:
 	$(FLEX) scanner.l
+
+flexdebug:
+	$(FLEX) scannerdebug.l
+
+scanner:
+	$(CXX) lex.yy.c -o $@
 
 parser:
 	$(CXX) lex.yy.c parser.tab.c -o $@

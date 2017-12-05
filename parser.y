@@ -89,12 +89,18 @@ programa:
 
 codigo:
 	cabecera principal
+	|
+	principal
 	;
 
 cabecera:
 	cabecera NUMERAL RESERVADA MENOR ID MAYOR
 	|
 	NUMERAL RESERVADA MENOR ID MAYOR
+	|
+	cabecera NUMERAL RESERVADA COMILLAS TEXTO COMILLAS
+	|
+	NUMERAL RESERVADA COMILLAS TEXTO COMILLAS
 	;
 
 principal:

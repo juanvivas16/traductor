@@ -12,6 +12,7 @@
 	using namespace std;
 
 	int lineas = 1;
+	int com = -1;
 	list<char *> reservada_tipo;
 	list<char *> reservada;
 
@@ -31,7 +32,6 @@
 %x comentario
 %x comentariosimple
 %x secomillas
-%x porcentajeval
 
 DIGITO	[0-9]
 NUMERO	{DIGITO}+
@@ -73,8 +73,22 @@ NUMERO	{DIGITO}+
 "!="				{cout<<"DIST"<<endl;}
 "||"				{cout<<"OR"<<endl;;}
 "&&"				{cout<<"AND"<<endl;}
-\%				  {cout<<"porcentaje"<<endl;}
+"\%"				{cout<<"porcentaje"<<endl;}
 ","					{cout<<"coma"<<endl;}
+"\'"				{cout<<"COMISIMPLE"<<endl;}
+"\""				{
+							if(com == 0 )
+							{
+								com = -1;
+								cout<<"COMILLAS1"<<endl;
+							}else
+							{
+							com = 1;
+							yyless(0);
+							BEGIN(secomillas);
+						}}
+
+
 [ \t]				{ }
 "\n" 				{lineas++;}
 
@@ -87,12 +101,17 @@ NUMERO	{DIGITO}+
 			<comentariosimple>"\n"	{lineas++; BEGIN(INITIAL);}
 			<comentariosimple>.	{ }
 
-			"\""	{cout<<"COMILLAS1"<<endl; BEGIN(secomillas);}
-			      <secomillas>"\"" {cout<<"COMILLAS2"<<endl; BEGIN(INITIAL);}
-			      <secomillas>"\n" { }
-						<secomillas>[A-Za-z0-9.-_ ]+ {cout<<"TEXTO"<<endl;}
-						<secomillas>"%"[dfc]+ {cout<<"PRCVAL"<<endl;}
-			      <secomillas>. {}
+			<secomillas>"\"" {if(com == 1)
+												{
+													com = 0;
+													cout<<"COMILLAS2"<<endl;
+												}
+												else{
+													yyless(0);
+													BEGIN(INITIAL);
+													}}
+				<secomillas>[A-Za-z0-9.-_, ]+ {cout<<"TEXTO"<<endl;}
+				<secomillas>"%"[dfc] {cout<<"PRCVAL"<<endl;}
 
 .			{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
 
