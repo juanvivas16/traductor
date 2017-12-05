@@ -17,5 +17,8 @@ int main()
 
   printf("hola esto es una prueba %d \n", b);
 
+  if (a == b)
+    int f;
+
   return  0;
 }

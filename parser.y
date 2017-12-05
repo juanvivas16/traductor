@@ -114,11 +114,21 @@ cuerpo:
 	|
 	declaracion cuerpo
 	|
+	declaracion
+	|
+	retornar cuerpo
+	|
 	retornar
 	|
 	scan cuerpo
 	|
 	print cuerpo
+	|
+	si
+	;
+
+si:
+	RESERVADA PARENTESISABR condicional PARENTESISCERR cuerpo
 	;
 
 scan:
@@ -129,6 +139,10 @@ print:
 	RESERVADA PARENTESISABR COMILLAS TEXTO COMILLAS PARENTESISCERR PTOCOMA
 	|
 	RESERVADA PARENTESISABR COMILLAS TEXTO PRCVAL TEXTO COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	;
+
+condicional:
+	ID IGUAL IGUAL ID
 	;
 
 retornar:
