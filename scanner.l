@@ -13,6 +13,7 @@
 	using namespace std;
 
 	int lineas = 1;
+	int com = -1;
 	list<char *> reservada_tipo;
 	list<char *> reservada;
 
@@ -47,8 +48,7 @@ NUMERO	{DIGITO}+
 
 										else if(esta_reservada(yytext))
 										{
-											cout<<"Pos"<<posicion_reservada(yytext)<<endl;
-											return (posicion_reservada(yytext));
+											return RESERVADA;
 										}
 										else
 											return ID;
@@ -82,15 +82,19 @@ NUMERO	{DIGITO}+
 "\%"				{return PORCENTAJE;}
 ","					{return COMA;}
 "\'"				{return COMISIMPLE;}
+"\""					{
+							if(com ==0 )
+							{
+								com = -1;
+								return COMILLAS;
+							}
+							com = 1;
+							yyless(0);
+							BEGIN(secomillas);
+						}
+
 [ \t]				{}
 "\n" 				{lineas++;}
-
-"\""	{return COMILLAS; BEGIN(secomillas);}
-      <secomillas>"\"" {return COMILLAS; BEGIN(INITIAL);}
-      <secomillas>"\n" { }
-			<secomillas>[A-Za-z0-9.-_ ]+ {return ID;}
-			<secomillas>"%"[dfc] {yylval.strval=strdup(yytext); return PRCVAL;}
-      <secomillas>. {}
 
 "/*"  {BEGIN(comentario);}
 			<comentario>"*/"	{BEGIN(INITIAL);}
@@ -101,6 +105,17 @@ NUMERO	{DIGITO}+
 			<comentariosimple>"\n"	{lineas++; BEGIN(INITIAL);}
 			<comentariosimple>.	{}
 
+			<secomillas>"\"" {if(com == 1)
+												{
+													com = 0;
+													return COMILLAS;
+												}
+												else{
+													yyless(0);
+													BEGIN(INITIAL);
+													}}
+				<secomillas>[A-Za-z0-9.-_, ]+ {yylval.strval=strdup(yytext); return TEXTO;}
+				<secomillas>"%"[dfc] {yylval.strval=strdup(yytext); return PRCVAL;}
 .
 
 %%

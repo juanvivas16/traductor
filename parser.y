@@ -37,18 +37,6 @@
 	int	ival;
 }
 
-
-
-%token<strval> INCLUDE
-%token<strval> PRINT
-%token<strval> SCAN
-%token<strval> MAIN
-%token<strval> RETURN
-%token<strval> IF
-%token<strval> ELSE
-%token<strval> DO
-%token<strval> WHILE
-%token<strval> FOR
 %token PUNTO
 %token PTOCOMA
 %token LLAVEABR
@@ -76,8 +64,10 @@
 %token COMA
 %token COMISIMPLE
 %token COMILLAS
+%token<strval> TEXTO
 %token<strval> PRCVAL
 %token<strval> TIPO
+%token<strval> RESERVADA
 %token<strval> ID
 %token<ival>	NUM
 
@@ -94,80 +84,57 @@
 %%
 
 programa:
-	codigo{
-		imprimir_reservada();
-	}
+	codigo
 	;
 
 codigo:
 	cabecera principal
-	|
-	principal
-	|
-	TIPO INCLUDE
 	;
 
 cabecera:
-	cabecera NUMERAL INCLUDE COMILLAS ID COMILLAS
+	cabecera NUMERAL RESERVADA MENOR ID MAYOR
 	|
-	cabecera NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR
-	|
-	cabecera NUMERAL INCLUDE MENOR ID MAYOR
-	|
-	NUMERAL INCLUDE COMILLAS ID COMILLAS
-	|
-	NUMERAL INCLUDE MENOR ID PUNTO ID MAYOR
-	|
-	NUMERAL INCLUDE MENOR ID MAYOR
+	NUMERAL RESERVADA MENOR ID MAYOR
 	;
 
 principal:
-	TIPO MAIN PARENTESISABR PARENTESISCERR LLAVEABR cuerpo LLAVECERR
+	TIPO RESERVADA PARENTESISABR PARENTESISCERR LLAVEABR cuerpo LLAVECERR
 	;
 
 cuerpo:
-	asignacion retornar;
-	|
-	declaracion retornar;
+	asignacion cuerpo
 	|
 	asignacion
 	|
-	declaracion
+	declaracion cuerpo
 	|
 	retornar
-	|
-	%empty
 	;
 
 retornar:
-	RETURN NUM PTOCOMA
+	RESERVADA NUM PTOCOMA
 	|
-	RETURN PARENTESISABR NUM PARENTESISCERR PTOCOMA
+	RESERVADA ID PTOCOMA
 	|
-	RETURN ID PTOCOMA
+	RESERVADA PARENTESISABR NUM PARENTESISCERR PTOCOMA
 	|
-	RETURN PARENTESISABR ID PARENTESISCERR PTOCOMA
+	RESERVADA PARENTESISABR ID PARENTESISCERR PTOCOMA
 	;
 
 declaracion:
-	declaracion TIPO ID PTOCOMA
-	|
 	TIPO ID PTOCOMA
+	|
+	TIPO ID IGUAL NUM PTOCOMA
+	|
+	TIPO ID IGUAL ID PTOCOMA
 	;
 
 asignacion:
-	asignacion ID IGUAL ID PTOCOMA
-	|
-	asignacion ID IGUAL NUM PTOCOMA
-	|
-	asignacion ID SUMA IGUAL NUM PTOCOMA
-	|
 	ID IGUAL ID PTOCOMA
 	|
 	ID IGUAL NUM PTOCOMA
-	|
-	ID SUMA IGUAL NUM PTOCOMA
 	;
+
 %%
 
 void yyerror(const char *s)
