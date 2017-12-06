@@ -134,15 +134,21 @@ cuerpo:
 	|
 	estructura cuerpo
 	|
+	estructura
+	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA cuerpo
+	|
+	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA
 	|
 	estructura LLAVEABR cuerpo LLAVECERR cuerpo
 	|
-	estructura
-	|
-	RESERVADA cuerpo
+	estructura LLAVEABR cuerpo LLAVECERR
 	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR cuerpo
+	|
+	RESERVADA LLAVEABR cuerpo LLAVECERR
+	|
+	RESERVADA cuerpo
 	;
 
 estructura:
