@@ -130,6 +130,8 @@ cuerpo:
 	|
 	estructura LLAVEABR cuerpo LLAVECERR cuerpo
 	|
+	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA cuerpo
+	|
 	estructura
 	;
 

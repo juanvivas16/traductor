@@ -108,5 +108,71 @@ int main()
 
       return d;
     }
+
+    while (2<= b)
+    {
+      float x;
+      char c = 5;
+      float d = 6;
+
+      b += a;
+      d = b;
+
+      printf("hola mundo \n");
+
+      scanf("%d", &b);
+
+      return d;
+    }
+
+    do
+    {
+      float x;
+      char c = 5;
+      float d = 6;
+
+      b += a;
+      d = b;
+
+      printf("hola mundo \n");
+
+      scanf("%d", &b);
+
+      return d;
+    } while (2<= b);
+
+    while (2<= b)
+    {
+      float x;
+      char c = 5;
+      float d = 6;
+
+      b += a;
+      d = b;
+
+      printf("hola mundo \n");
+
+      scanf("%d", &b);
+
+      return d;
+    }
+
+    do
+    {
+      float x;
+      char c = 5;
+      float d = 6;
+
+      b += a;
+      d = b;
+
+      printf("hola mundo \n");
+
+      scanf("%d", &b);
+
+      return d;
+    } while (2<= b);
+    
+
   return  0;
 }
