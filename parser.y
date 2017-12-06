@@ -116,8 +116,6 @@ cuerpo:
 	|
 	declaracion
 	|
-	retornar cuerpo
-	|
 	retornar
 	|
 	scan cuerpo
@@ -130,15 +128,13 @@ cuerpo:
 	|
 	estructura cuerpo
 	|
-	estructura LLAVEABR cuerpo LLAVECERR retornar
+	estructura LLAVEABR cuerpo LLAVECERR cuerpo
 	|
 	estructura
 	;
 
 estructura:
 	RESERVADA PARENTESISABR condicional PARENTESISCERR
-	|
-	RESERVADA RESERVADA PARENTESISABR condicional PARENTESISCERR PTOCOMA
 	;
 
 scan:
@@ -153,6 +149,34 @@ print:
 
 condicional:
 	ID IGUAL IGUAL ID
+	|
+	NUM IGUAL IGUAL ID
+	|
+	ID IGUAL IGUAL NUM
+	|
+	ID MAYOR ID
+	|
+	ID MAYOR_I ID
+	|
+	ID MENOR ID
+	|
+	ID MENOR_I ID
+	|
+	NUM MAYOR ID
+	|
+	NUM MAYOR_I ID
+	|
+	NUM MENOR ID
+	|
+	NUM MENOR_I ID
+	|
+	ID MAYOR NUM
+	|
+	ID MAYOR_I NUM
+	|
+	ID MENOR NUM
+	|
+	ID MENOR_I NUM
 	;
 
 retornar:
