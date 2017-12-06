@@ -1,178 +1,55 @@
-#include <hola>
-#include "hola.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 int main()
 {
-  float a;
-  int b;
-  char c = 5;
-  float d = 6;
+  int X;
+  scanf("%d", &X);
 
-  b += a;
-  d = b;
+  int i = 2;
+  int j = 4;
+  int contador = 0;
+  int mod;
 
-  printf("hola mundo \n");
-
-  scanf("%d", &b);
-
-  printf("hola esto es una prueba %d \n", b);
-
+  if (a == b)
+    a = b;
+   else
+    c = d;
 
   if (a == b)
   {
-    float x;
-    char c = 5;
-    float d = 6;
+    if (d==c)
+      ad=dc;
 
-    b += a;
-    d = b;
+    int i = 2;
+    int j = 4;
 
-    printf("hola mundo \n");
+    while ( c <= 4)
+      int f = 6;
 
-    scanf("%d", &b);
-
-    return d;
-  }
-
-  if(a>b)
-    float xxx;
-
-  if (a < b)
-  {
-    float x;
-    char c = 5;
-    float d = 6;
-
-    b += a;
-    d = b;
-
-    printf("hola mundo \n");
-
-    scanf("%d", &b);
-
-    return d;
-  }
-    if(a>=b)
-      float xxx;
-
-    if (a <= b)
-    {
-      float x;
-      char c = 5;
-      float d = 6;
-
-      b += a;
-      d = b;
-
-      printf("hola mundo \n");
-
-      scanf("%d", &b);
-
-      return d;
-    }
-
-    if(a==6)
-      float xxx;
-
-      if(3==b)
-        float xxx;
-
-      if (a > 3)
+      if (a == b)
       {
-        float x;
-        char c = 5;
-        float d = 6;
-
-        b += a;
-        d = b;
-
-        printf("hola mundo \n");
-
-        scanf("%d", &b);
-
-        return d;
+        int f = 6;
       }
+    int mod;
+  }
+  else
+  {
+    int X;
+    scanf("%d", &X);
+  }
 
-    if (2<= b)
-    {
-      float x;
-      char c = 5;
-      float d = 6;
+  do {
+    termino = a + b + c;
+    printf(", %d", termino);
+    a = b;
+    b = c;
+    c = termino;
+    i += 1;
 
-      b += a;
-      d = b;
+  } while(i <= N);
 
-      printf("hola mundo \n");
 
-      scanf("%d", &b);
+  return 0;
 
-      return d;
-    }
-
-    while (2<= b)
-    {
-      float x;
-      char c = 5;
-      float d = 6;
-
-      b += a;
-      d = b;
-
-      printf("hola mundo \n");
-
-      scanf("%d", &b);
-
-      return d;
-    }
-
-    do
-    {
-      float x;
-      char c = 5;
-      float d = 6;
-
-      b += a;
-      d = b;
-
-      printf("hola mundo \n");
-
-      scanf("%d", &b);
-
-      return d;
-    } while (2<= b);
-
-    while (2<= b)
-    {
-      float x;
-      char c = 5;
-      float d = 6;
-
-      b += a;
-      d = b;
-
-      printf("hola mundo \n");
-
-      scanf("%d", &b);
-
-      return d;
-    }
-
-    do
-    {
-      float x;
-      char c = 5;
-      float d = 6;
-
-      b += a;
-      d = b;
-
-      printf("hola mundo \n");
-
-      scanf("%d", &b);
-
-      return d;
-    } while (2<= b);
-    
-
-  return  0;
 }
