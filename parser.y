@@ -122,13 +122,23 @@ cuerpo:
 	|
 	scan cuerpo
 	|
+	scan
+	|
 	print cuerpo
 	|
-	si
+	print
+	|
+	estructura cuerpo
+	|
+	estructura LLAVEABR cuerpo LLAVECERR retornar
+	|
+	estructura
 	;
 
-si:
-	RESERVADA PARENTESISABR condicional PARENTESISCERR cuerpo
+estructura:
+	RESERVADA PARENTESISABR condicional PARENTESISCERR
+	|
+	RESERVADA RESERVADA PARENTESISABR condicional PARENTESISCERR PTOCOMA
 	;
 
 scan:

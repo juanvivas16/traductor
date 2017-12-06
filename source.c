@@ -17,8 +17,16 @@ int main()
 
   printf("hola esto es una prueba %d \n", b);
 
-  if (a == b)
-    int f;
+    if (a == b)
+      int f;
+
+    if (a == b)
+    {
+      float x;
+    }
+
+
+
 
   return  0;
 }
