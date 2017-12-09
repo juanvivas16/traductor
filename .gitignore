@@ -4,5 +4,5 @@
 lex.yy.c
 *scanner
 *parser
-traductor.tab.c
-traductor.tab.h
+parser.tab.c
+parser.tab.h
