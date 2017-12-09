@@ -6,9 +6,12 @@
 	#include <cstring>
   #include <string>
 	#include <cstdlib>
+	#include <typeinfo>
 
 	using namespace std;
 
+	list<list<char *>> tabla_sim;
+	int cantErrores = 0;
 	extern int lineas;
 	extern int yyparse();
 	extern int yylex();
@@ -17,11 +20,19 @@
 	extern list<char *> reservada;
 	void yyerror(const char *);
 
-	extern bool esta_reservada_tipo(char *);
+	void agregar_ambito();
+	void eliminar_ambito();
+	bool esta_tabla_sim(char *p);
+	void imprimir_tabla_sim();
+	bool insertar_tabla_sim(char *p);
+	void liberar_tabla_sim();
+	void obtener_ambito();
+	int obtener_tamano_ambito();
+
 	extern void cargar_reservada_tipo();
-	extern void eliminar_reservada();
-	extern bool esta_reservada(char *);
-	extern void cargar_reservada();
+	extern void eliminar_reservada_tipo();
+	extern bool esta_reservada_tipo(char *);
+	extern void imprimir_reservada_tipo();
 
 	extern void cargar_reservada();
 	extern bool esta_reservada(char *);
@@ -34,9 +45,14 @@
 %union
 {
 	char *strval;
-	int	ival;
+	float	ival;
 }
 
+
+%token<strval> TIPO
+%token<strval> RESERVADA
+%token<strval> ID
+%token<ival>	NUM
 %token PUNTO
 %token PTOCOMA
 %token LLAVEABR
@@ -58,19 +74,22 @@
 %token MENOR_I
 %token MAYOR_I
 %token DIST
+%token SUM_ASSIGN
+%token SUB_ASSIGN
+%token MUL_ASSIGN
+%token DIV_ASSIGN
+%token MOD_ASSIGN
+%token IGUALD
 %token OR
 %token AND
+%token INC
+%token DEC
 %token PORCENTAJE
 %token COMA
 %token COMISIMPLE
 %token COMILLAS
-%token<strval> TEXTO
 %token<strval> PRCVAL
-%token<strval> TIPO
-%token<strval> RESERVADA
-%token<strval> ID
-%token<ival>	NUM
-
+%token<strval> TEXTO
 
 %right IGUAL
 %left SUMA MENOS
@@ -84,7 +103,13 @@
 %%
 
 programa:
-	codigo
+	codigo {
+		if(cantErrores>0)
+			cout<<endl<<endl<<"***ERROR: tipo - Semantico***"<<endl;
+		else
+			cout<<endl<<endl<<"Exito!"<<endl;
+
+	}
 	;
 
 codigo:
@@ -108,7 +133,7 @@ cabecera:
 	;
 
 principal:
-	TIPO RESERVADA PARENTESISABR PARENTESISCERR LLAVEABR cuerpo LLAVECERR
+	TIPO RESERVADA PARENTESISABR PARENTESISCERR LLAVEABR {agregar_ambito(); } cuerpo LLAVECERR{eliminar_ambito(); }
 	;
 
 cuerpo:
@@ -176,11 +201,11 @@ print:
 	;
 
 condicional:
-	ID IGUAL IGUAL ID
+	ID IGUALD ID
 	|
-	NUM IGUAL IGUAL ID
+	NUM IGUALD ID
 	|
-	ID IGUAL IGUAL NUM
+	ID IGUALD NUM
 	|
 	ID MAYOR ID
 	|
@@ -219,10 +244,78 @@ retornar:
 
 declaracion:
 	TIPO ID PTOCOMA
+	{
+		if(esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else
+		{
+			insertar_tabla_sim($2);
+			imprimir_tabla_sim();
+		}
+
+		free($1);
+		free($2);
+	}
 	|
 	TIPO ID IGUAL NUM PTOCOMA
+	{
+		if(esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp($1, "char"))
+		{
+			insertar_tabla_sim($2);
+			imprimir_tabla_sim();
+		}
+		else
+		{
+			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+		free($2);
+	}
 	|
 	TIPO ID IGUAL ID PTOCOMA
+	{
+		if(esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if( (typeid($2) == typeid($4)) && esta_tabla_sim($4))
+		{
+			insertar_tabla_sim($2);
+			imprimir_tabla_sim();
+			cout << "Base vs *pbase: ";
+			cout<<(typeid($2) == typeid($4))<<endl;
+		}
+		else if(!esta_tabla_sim($4))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$4<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else
+		{
+			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+
+		}
+
+		free($1);
+		free($2);
+		free($4);
+	}
 	;
 
 asignacion:
@@ -230,17 +323,17 @@ asignacion:
 	|
 	ID IGUAL NUM PTOCOMA
 	|
-	ID SUMA IGUAL ID PTOCOMA
+	ID SUM_ASSIGN ID PTOCOMA
 	|
-	ID SUMA IGUAL NUM PTOCOMA
+	ID SUM_ASSIGN NUM PTOCOMA
 	|
-	ID MENOS IGUAL ID PTOCOMA
+	ID SUB_ASSIGN ID PTOCOMA
 	|
-	ID MENOS IGUAL NUM PTOCOMA
+	ID SUB_ASSIGN NUM PTOCOMA
 	|
-	ID MULTI IGUAL ID PTOCOMA
+	ID MUL_ASSIGN ID PTOCOMA
 	|
-	ID MULTI IGUAL NUM PTOCOMA
+	ID MUL_ASSIGN NUM PTOCOMA
 	|
 	ID IGUAL ID SUMA ID PTOCOMA
 	|
@@ -284,16 +377,127 @@ asignacion:
 	|
 	ID IGUAL NUM PORCENTAJE NUM PTOCOMA
 	|
-	ID SUMA SUMA PTOCOMA
+	ID INC PTOCOMA
 	|
-	ID MENOS MENOS PTOCOMA
+	ID DEC PTOCOMA
 	|
-	SUMA SUMA ID PTOCOMA
+	INC ID PTOCOMA
 	|
-	MENOS MENOS ID PTOCOMA
+	DEC ID PTOCOMA
 	;
 
 %%
+
+void agregar_ambito()
+{
+	list<char *> lista_ambito;
+	tabla_sim.push_back(lista_ambito);
+}
+
+void eliminar_ambito()
+{
+	list<list<char *>>::iterator it;
+	list<char *>::iterator it2;
+
+	it = tabla_sim.end();
+	it--;
+	it2 = (*it).begin();
+
+	for(it2; it2!=(*it).end() ;it2++)
+		free(*it2);
+
+	tabla_sim.pop_back();
+}
+
+bool esta_tabla_sim(char *p)
+{
+	list<list<char *>>::iterator it;
+	list<char *>::iterator it2;
+
+	it = tabla_sim.end();
+	it--;
+	it2 = (*it).begin();
+
+	for(it2; it2!=(*it).end(); it2++)
+	{
+		if(!strcmp(*it2,p))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void imprimir_tabla_sim()
+{
+	list<list<char *>>::iterator it;
+	list<char *>::iterator it2;
+	int i = 0;
+
+	it = tabla_sim.end();
+	it--;
+
+	for(i; i < tabla_sim.size(); i++)
+	{
+		cout<<"\nEn lista "<<i<<": ";
+
+		it2 = (*it).begin();
+
+		for(it2; it2 != (*it).end(); it2++)
+			cout<<*it2<<" ";
+
+		it--;
+	}
+	cout<<endl;
+}
+
+
+bool insertar_tabla_sim(char *p)
+{
+	char *aux = strdup(p);
+	list<list<char *>>::iterator it;
+
+	if(esta_tabla_sim(aux))
+		return false;
+
+
+	it = tabla_sim.end();
+	it--;
+	(*it).push_back(aux);
+
+	return true;
+}
+
+void liberar_tabla_sim()
+{
+	int i = 0;
+
+	for(i; i < tabla_sim.size(); i++)
+		eliminar_ambito();
+}
+
+void obtener_ambito()
+{
+	list<list<char *>>::iterator it;
+	list<char *>::iterator it2;
+
+	it = tabla_sim.end();
+	it--;
+
+	for(it2 = (*it).begin(); it2 != (*it).end(); it2++)
+		cout<<*it2<<endl;
+}
+
+int obtener_tamano_ambito()
+{
+	list<list<char *>>::iterator it;
+
+	it = tabla_sim.end();
+	it--;
+
+	return (*it).size();
+}
 
 void yyerror(const char *s)
 {
@@ -318,9 +522,13 @@ int main(int argc, char **argv)
 	}
 
 	yyin = archivo;
+
 	cargar_reservada();
 	cargar_reservada_tipo();
+	agregar_ambito();
 	yyparse();
 
-	cout<<"EXITO: Parsing Correcto."<<endl;
+	eliminar_reservada();
+	eliminar_reservada_tipo();
+
 }

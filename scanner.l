@@ -18,9 +18,10 @@
 	list<char *> reservada;
 
 	void cargar_reservada_tipo();
+	void eliminar_reservada_tipo();
 	bool esta_reservada_tipo(char *rt);
 	void imprimir_reservada_tipo();
-	void eliminar_reservada_tipo();
+
 
 	void cargar_reservada();
 	bool esta_reservada(char *r);
@@ -34,12 +35,12 @@
 %x comentariosimple
 %x secomillas
 
-DIGITO	[0-9]
-NUMERO	{DIGITO}+
+LETRA [a-zA-Z_]
+DIGITO [0-9]
 
 %%
 
-[a-zA-Z_][a-zA-Z_0-9]*	{
+{LETRA}({LETRA}|{DIGITO})*	{
 
 										yylval.strval=strdup(yytext);
 
@@ -52,9 +53,10 @@ NUMERO	{DIGITO}+
 										}
 										else
 											return ID;
-				}
+										}
 
-{NUMERO}		{yylval.ival=atoi(yytext); return NUM;}
+(-)?{DIGITO}+							{yylval.ival=atoi(yytext); return NUM;}
+(-)?{DIGITO}*"."{DIGITO}+	{yylval.ival=atof(yytext); return NUM;}
 
 "."       	{return PUNTO;}
 ";"					{return PTOCOMA;}
@@ -77,17 +79,26 @@ NUMERO	{DIGITO}+
 "<="				{return MENOR_I;}
 ">="				{return MAYOR_I;}
 "!="				{return DIST;}
+"+="        {return SUM_ASSIGN;}
+"-="        {return SUB_ASSIGN;}
+"*="        {return MUL_ASSIGN;}
+"/="        {return DIV_ASSIGN;}
+"%="        {return MOD_ASSIGN;}
+"=="				{return IGUALD;}
 "||"				{return OR;}
 "&&"				{return AND;}
+"++"				{return INC;}
+"--"				{return DEC;}
 "\%"				{return PORCENTAJE;}
 ","					{return COMA;}
 "\'"				{return COMISIMPLE;}
 "\""				{
-							if(com ==0 )
+							if(com == 0)
 							{
 								com = -1;
 								return COMILLAS;
-							}else
+							}
+							else
 							{
 							com = 1;
 							yyless(0);

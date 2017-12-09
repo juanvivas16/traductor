@@ -33,12 +33,12 @@
 %x comentariosimple
 %x secomillas
 
-DIGITO	[0-9]
-NUMERO	{DIGITO}+
+LETRA [a-zA-Z_]
+DIGITO [0-9]
 
 %%
 
-[a-zA-Z_][a-zA-Z_0-9]*	{
+{LETRA}({LETRA}|{DIGITO})* {
 
 										if(esta_reservada_tipo(yytext))
 											cout<<"tipo:"<<yytext<<endl;
@@ -48,7 +48,9 @@ NUMERO	{DIGITO}+
 										  cout<<"ID"<<endl;
 				}
 
-{NUMERO}		{cout<<"Numero"<<endl;}
+
+(-)?{DIGITO}+     { cout<<"constante3"<<endl; }
+(-)?{DIGITO}*"."{DIGITO}+ { cout<<"constante6"<<endl; }
 
 "."       	{cout<<"punto"<<endl;}
 ";"					{cout<<"ptcoma"<<endl;}
