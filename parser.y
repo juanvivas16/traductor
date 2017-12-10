@@ -293,15 +293,21 @@ scan:
 			cout<<endl<<"*ERROR: variable ->"<<$8<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-	/*	else if((strcmp($4,"%d") && strcmp(get<0>(obtener_tupla_por_id($8)), "int"))
-		&&
-		(strcmp($4,"%f") && strcmp(get<0>(obtener_tupla_por_id($8)), "float"))
-		&&
-		(strcmp($4,"%c") && strcmp(get<0>(obtener_tupla_por_id($8)), "char")) )
-		{
-			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
-			cantErrores++;
-		}*/
+		else{
+			if(!(strcmp($4,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "int")))
+			{
+			}
+			else if(!(strcmp($4,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "char")))
+			{
+			}
+			else if(!(strcmp($4,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "float")))
+			{
+			}
+			else{
+				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+				cantErrores++;
+			}
+		}
 		free($1);
 		free($8);
 	}
@@ -331,7 +337,23 @@ print:
 			cout<<endl<<"*ERROR: variable ->"<<$9<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else{
+			if(!(strcmp($5,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "int")))
+			{
+			}
+			else if(!(strcmp($5,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "char")))
+			{
+			}
+			else if(!(strcmp($5,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "float")))
+			{
+			}
+			else{
+				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+				cantErrores++;
+			}
+		}
 		free($1);
+		free($5);
 		free($9);
 	}
 	|
@@ -348,7 +370,23 @@ print:
 			cout<<endl<<"*ERROR: variable ->"<<$8<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else{
+			if(!(strcmp($4,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "int")))
+			{
+			}
+			else if(!(strcmp($4,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "char")))
+			{
+			}
+			else if(!(strcmp($4,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "float")))
+			{
+			}
+			else{
+				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+				cantErrores++;
+			}
+		}
 		free($1);
+		free($4);
 		free($8);
 	}
 	|
@@ -365,7 +403,24 @@ print:
 			cout<<endl<<"*ERROR: variable ->"<<$8<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else{
+			if(!(strcmp($5,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "int")))
+			{
+			}
+			else if(!(strcmp($5,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "char")))
+			{
+			}
+			else if(!(strcmp($5,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($8)), "float")))
+			{
+			}
+			else{
+				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+				cantErrores++;
+			}
+		}
+
 		free($1);
+		free($5);
 		free($8);
 	}
 	|
@@ -382,7 +437,24 @@ print:
 			cout<<endl<<"*ERROR: variable ->"<<$7<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else{
+			if(!(strcmp($4,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($7)), "int")))
+			{
+			}
+			else if(!(strcmp($4,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($7)), "char")))
+			{
+			}
+			else if(!(strcmp($4,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($7)), "float")))
+			{
+			}
+			else{
+				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+				cantErrores++;
+			}
+		}
+
 		free($1);
+		free($4);
 		free($7);
 	}
 	|
@@ -405,7 +477,43 @@ print:
 			cout<<endl<<"*ERROR: variable ->"<<$11<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else{
+			if(!(strcmp($4,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "int")) && !(strcmp($6,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "int")) )
+			{
+			}
+			else if(!(strcmp($4,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "int")) && !(strcmp($6,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "char")))
+			{
+			}
+			else if(!(strcmp($4,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "int")) && !(strcmp($6,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "float")))
+			{
+			}
+			else if(!(strcmp($4,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "char")) && !(strcmp($6,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "int")))
+			{
+			}
+			else if(!(strcmp($4,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "char")) && !(strcmp($6,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "char")))
+			{
+			}
+			else if(!(strcmp($4,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "char")) && !(strcmp($6,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "float")))
+			{
+			}
+			else if(!(strcmp($4,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "float")) && !(strcmp($6,"%d")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "int")))
+			{
+			}
+			else if(!(strcmp($4,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "float")) && !(strcmp($6,"%c")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "char")))
+			{
+			}
+			else if(!(strcmp($4,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($9)), "float")) && !(strcmp($6,"%f")) && !(strcmp(get<0>(obtener_tupla_por_id($11)), "float")))
+			{
+			}
+			else{
+				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+				cantErrores++;
+			}
+		}
+
 		free($1);
+		free($4);
+		free($6);
 		free($9);
 		free($11);
 	}

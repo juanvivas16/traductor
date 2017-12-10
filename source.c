@@ -11,8 +11,15 @@ int main()
   int a = 0;
   a = 2;
   float z;
+  char y = 'a';
 
-scanf("%d", &z);
+//scanf("%d", &a);
+
+//scanf("%c", &y);
+
+scanf("%c", &y);
+
+printf("%c , %f", y, z);
 
 if (a == 4) {
   int b = 0;
