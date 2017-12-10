@@ -7,10 +7,14 @@
   #include <string>
 	#include <cstdlib>
 	#include <typeinfo>
+	#include <tuple>
+	#include <vector>
 
 	using namespace std;
 
-	list<list<char *>> tabla_sim;
+	typedef tuple<char *, char *> tupla;
+
+	vector<vector<tuple<char *, char *>>> tabla_sim;
 	int cantErrores = 0;
 	extern int lineas;
 	extern int yyparse();
@@ -22,12 +26,12 @@
 
 	void agregar_ambito();
 	void eliminar_ambito();
-	bool esta_tabla_sim(char *p);
+	bool esta_tabla_sim(char *id);
+	tupla obtener_tupla_por_id(char *id);
 	void imprimir_tabla_sim();
-	bool insertar_tabla_sim(char *p);
+	bool insertar_tabla_sim(tuple<char *, char *> const & );
 	void liberar_tabla_sim();
 	void obtener_ambito();
-	int obtener_tamano_ambito();
 
 	extern void cargar_reservada_tipo();
 	extern void eliminar_reservada_tipo();
@@ -108,7 +112,6 @@ programa:
 			cout<<endl<<endl<<"***ERROR: tipo - Semantico***"<<endl;
 		else
 			cout<<endl<<endl<<"Exito!"<<endl;
-
 	}
 	;
 
@@ -133,7 +136,7 @@ cabecera:
 	;
 
 principal:
-	TIPO RESERVADA PARENTESISABR PARENTESISCERR LLAVEABR {agregar_ambito(); } cuerpo LLAVECERR{eliminar_ambito(); }
+	TIPO RESERVADA PARENTESISABR PARENTESISCERR LLAVEABR cuerpo LLAVECERR
 	;
 
 cuerpo:
@@ -202,44 +205,232 @@ print:
 
 condicional:
 	ID IGUALD ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
 	|
 	NUM IGUALD ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	ID IGUALD NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	ID MAYOR ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
 	|
 	ID MAYOR_I ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
 	|
 	ID MENOR ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
 	|
 	ID MENOR_I ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
 	|
 	NUM MAYOR ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	NUM MAYOR_I ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	NUM MENOR ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	NUM MENOR_I ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	ID MAYOR NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	ID MAYOR_I NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	ID MENOR NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	ID MENOR_I NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	;
 
 retornar:
 	RESERVADA NUM PTOCOMA
 	|
 	RESERVADA ID PTOCOMA
+	{
+		if(!esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($2);
+	}
 	|
 	RESERVADA PARENTESISABR NUM PARENTESISCERR PTOCOMA
 	|
 	RESERVADA PARENTESISABR ID PARENTESISCERR PTOCOMA
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	;
 
 declaracion:
@@ -253,7 +444,11 @@ declaracion:
 		}
 		else
 		{
-			insertar_tabla_sim($2);
+			auto tipo = strdup($1);
+			auto id = strdup($2);
+			auto aux = make_tuple(tipo,id);
+
+			insertar_tabla_sim(aux);
 			imprimir_tabla_sim();
 		}
 
@@ -271,7 +466,65 @@ declaracion:
 		}
 		else if(strcmp($1, "char"))
 		{
-			insertar_tabla_sim($2);
+			auto tipo = strdup($1);
+			auto id = strdup($2);
+			auto aux = make_tuple(tipo,id);
+
+			insertar_tabla_sim(aux);
+			imprimir_tabla_sim();
+		}
+		else
+		{
+			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+		free($2);
+	}
+	|
+	TIPO ID IGUAL COMISIMPLE ID COMISIMPLE PTOCOMA
+	{
+		if(esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp($1,"int") && strcmp($1, "float"))
+		{
+			auto tipo = strdup($1);
+			auto id = strdup($2);
+			auto aux = make_tuple(tipo,id);
+
+			insertar_tabla_sim(aux);
+			imprimir_tabla_sim();
+		}
+		else
+		{
+			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+		free($2);
+	}
+	|
+	TIPO ID IGUAL COMISIMPLE NUM COMISIMPLE PTOCOMA
+	{
+		if(esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp($1,"int") && strcmp($1, "float"))
+		{
+			auto tipo = strdup($1);
+			auto id = strdup($2);
+			auto aux = make_tuple(tipo,id);
+
+			insertar_tabla_sim(aux);
 			imprimir_tabla_sim();
 		}
 		else
@@ -292,24 +545,25 @@ declaracion:
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-		else if( (typeid($2) == typeid($4)) && esta_tabla_sim($4))
-		{
-			insertar_tabla_sim($2);
-			imprimir_tabla_sim();
-			cout << "Base vs *pbase: ";
-			cout<<(typeid($2) == typeid($4))<<endl;
-		}
 		else if(!esta_tabla_sim($4))
 		{
 			imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$4<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else if(!strcmp($1,get<0>(obtener_tupla_por_id($4))))
+		{
+			auto tipo = strdup($1);
+			auto id = strdup($2);
+			auto aux = make_tuple(tipo,id);
+
+			insertar_tabla_sim(aux);
+			imprimir_tabla_sim();
+		}
 		else
 		{
-			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO"<<" Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
-
 		}
 
 		free($1);
@@ -320,99 +574,596 @@ declaracion:
 
 asignacion:
 	ID IGUAL ID PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+		free($3);
+	}
 	|
 	ID IGUAL NUM PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+	}
 	|
 	ID SUM_ASSIGN ID PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+		free($3);
+	}
 	|
 	ID SUM_ASSIGN NUM PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+	}
 	|
 	ID SUB_ASSIGN ID PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+		free($3);
+	}
 	|
 	ID SUB_ASSIGN NUM PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+	}
 	|
 	ID MUL_ASSIGN ID PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+		free($3);
+	}
 	|
 	ID MUL_ASSIGN NUM PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		free($1);
+	}
 	|
-	ID IGUAL ID SUMA ID PTOCOMA
+	ID IGUAL suma PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
-	ID IGUAL NUM SUMA NUM PTOCOMA
+	ID IGUAL resta PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
-	ID IGUAL ID SUMA NUM PTOCOMA
+	ID IGUAL multi PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
-	ID IGUAL NUM SUMA ID PTOCOMA
-	|
-	ID IGUAL ID SUMA ID SUMA ID PTOCOMA
-	|
-	ID IGUAL ID MENOS ID PTOCOMA
-	|
-	ID IGUAL NUM MENOS NUM PTOCOMA
-	|
-	ID IGUAL ID MENOS NUM PTOCOMA
-	|
-	ID IGUAL NUM MENOS ID PTOCOMA
-	|
-	ID IGUAL ID MULTI ID PTOCOMA
-	|
-	ID IGUAL NUM MULTI NUM PTOCOMA
-	|
-	ID IGUAL ID MULTI NUM PTOCOMA
-	|
-	ID IGUAL NUM MULTI ID PTOCOMA
-	|
-	ID IGUAL ID DIV ID PTOCOMA
-	|
-	ID IGUAL NUM DIV NUM PTOCOMA
-	|
-	ID IGUAL ID DIV NUM PTOCOMA
-	|
-	ID IGUAL NUM DIV ID PTOCOMA
+	ID IGUAL div PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	ID IGUAL ID PORCENTAJE ID PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($5))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$5<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+		free($5);
+	}
 	|
 	ID IGUAL ID PORCENTAJE NUM PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
 	|
 	ID IGUAL NUM PORCENTAJE ID PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($5))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$5<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($5);
+	}
 	|
 	ID IGUAL NUM PORCENTAJE NUM PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	ID INC PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	ID DEC PTOCOMA
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	INC ID PTOCOMA
+	{
+		if(!esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($2);
+	}
 	|
 	DEC ID PTOCOMA
+	{
+		if(!esta_tabla_sim($2))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($2);
+	}
+	;
+
+suma:
+	suma SUMA ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
+	|
+	suma SUMA NUM
+	|
+	ID SUMA ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
+	|
+	NUM SUMA NUM
+	|
+	ID SUMA NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
+	|
+	NUM SUMA ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
+	;
+
+resta:
+	resta MENOS ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
+	|
+	resta MENOS NUM
+	|
+	ID MENOS ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
+	|
+	NUM MENOS NUM
+	|
+	ID MENOS NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
+	|
+	NUM MENOS ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
+	;
+
+multi:
+	multi MULTI ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
+	|
+	multi MULTI NUM
+	|
+	ID MULTI ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
+	|
+	NUM MULTI NUM
+	|
+	ID MULTI NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
+	|
+	NUM MULTI ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
+	;
+
+div:
+	div DIV ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
+	|
+	div DIV NUM
+	|
+	ID DIV ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($3);
+	}
+	|
+	NUM DIV NUM
+	|
+	ID DIV NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
+	|
+	NUM DIV ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	;
 
 %%
 
 void agregar_ambito()
 {
-	list<char *> lista_ambito;
-	tabla_sim.push_back(lista_ambito);
+	vector<tuple<char *, char *> > lista_ambito;
+	tabla_sim.emplace_back(lista_ambito);
 }
 
 void eliminar_ambito()
 {
-	list<list<char *>>::iterator it;
-	list<char *>::iterator it2;
+	vector<vector<tuple<char *,char *> > >::iterator it;
+	vector<tuple<char *, char *> >::iterator it2;
 
 	it = tabla_sim.end();
 	it--;
 	it2 = (*it).begin();
 
 	for(it2; it2!=(*it).end() ;it2++)
-		free(*it2);
+	{
+		free(get<0>(*it2));
+		free(get<1>(*it2));
+	}
 
 	tabla_sim.pop_back();
 }
 
-bool esta_tabla_sim(char *p)
+bool esta_tabla_sim(char *id)
 {
-	list<list<char *>>::iterator it;
-	list<char *>::iterator it2;
+	vector<vector<tuple<char *, char *> > >::iterator it;
+	vector<tuple<char *, char *> >::iterator it2;
 
 	it = tabla_sim.end();
 	it--;
@@ -420,7 +1171,8 @@ bool esta_tabla_sim(char *p)
 
 	for(it2; it2!=(*it).end(); it2++)
 	{
-		if(!strcmp(*it2,p))
+		//cout<<get<1>(*it2)<<" es igual a : "<<id<<endl;
+		if(!strcmp(get<1>(*it2),id))
 		{
 			return true;
 		}
@@ -429,42 +1181,61 @@ bool esta_tabla_sim(char *p)
 	return false;
 }
 
+tupla obtener_tupla_por_id(char *id)
+{
+	vector<vector<tuple<char *, char *> > >::iterator it;
+	vector<tuple<char *, char *> >::iterator it2;
+
+	it = tabla_sim.end();
+	it--;
+	it2 = (*it).begin();
+
+	for(it2; it2!=(*it).end(); it2++)
+	{
+		if(!strcmp(get<1>(*it2),id))
+			return *it2;
+	}
+
+}
+
 void imprimir_tabla_sim()
 {
-	list<list<char *>>::iterator it;
-	list<char *>::iterator it2;
+	vector<vector<tuple<char *, char *> > >::iterator it;
+	vector<tuple<char *, char *> >::iterator it2;
 	int i = 0;
 
 	it = tabla_sim.end();
 	it--;
 
+
 	for(i; i < tabla_sim.size(); i++)
 	{
 		cout<<"\nEn lista "<<i<<": ";
-
 		it2 = (*it).begin();
 
 		for(it2; it2 != (*it).end(); it2++)
-			cout<<*it2<<" ";
-
+		{
+			cout<<"<"<<get<0>(*it2)<< "," <<get<1>(*it2)<<">";
+		}
 		it--;
 	}
 	cout<<endl;
 }
 
 
-bool insertar_tabla_sim(char *p)
+bool insertar_tabla_sim(tuple<char *, char *> const & tup)
 {
-	char *aux = strdup(p);
-	list<list<char *>>::iterator it;
+	vector<vector<tuple<char *, char *> > >::iterator it;
 
-	if(esta_tabla_sim(aux))
+	if(esta_tabla_sim(get<1>(tup)))
+	{
+		cout<<"ALERTA"<<endl;
 		return false;
-
+	}
 
 	it = tabla_sim.end();
 	it--;
-	(*it).push_back(aux);
+	(*it).emplace_back(tup);
 
 	return true;
 }
@@ -479,24 +1250,14 @@ void liberar_tabla_sim()
 
 void obtener_ambito()
 {
-	list<list<char *>>::iterator it;
-	list<char *>::iterator it2;
+	vector<vector<tuple<char *, char *> > >::iterator it;
+	vector<tuple<char *, char *> >::iterator it2;
 
 	it = tabla_sim.end();
 	it--;
 
 	for(it2 = (*it).begin(); it2 != (*it).end(); it2++)
-		cout<<*it2<<endl;
-}
-
-int obtener_tamano_ambito()
-{
-	list<list<char *>>::iterator it;
-
-	it = tabla_sim.end();
-	it--;
-
-	return (*it).size();
+		cout<<get<0>(*it2)<<get<1>(*it2)<<endl;
 }
 
 void yyerror(const char *s)
@@ -526,6 +1287,7 @@ int main(int argc, char **argv)
 	cargar_reservada();
 	cargar_reservada_tipo();
 	agregar_ambito();
+
 	yyparse();
 
 	eliminar_reservada();

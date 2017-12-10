@@ -4,10 +4,6 @@
 	#include <iostream>
 	#include <cstdio>
 	#include <list>
-	#include <cctype>
-	#include <cstring>
-  #include <string>
-	#include <cstdlib>
 	#include "parser.tab.h"
 
 	using namespace std;
@@ -242,6 +238,7 @@ int posicion_reservada(char *r)
 
 			pos++;
 	}
+	return 0;
 }
 
 void imprimir_reservada()
