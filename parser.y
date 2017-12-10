@@ -14,8 +14,10 @@
 
 	typedef tuple<char *, char *> tupla;
 
+	FILE *yysalida;
 	vector<vector<tuple<char *, char *>>> tabla_sim;
 	int cantErrores = 0;
+	char *variable;
 	extern int lineas;
 	extern int yyparse();
 	extern int yylex();
@@ -49,7 +51,7 @@
 %union
 {
 	char *strval;
-	float	ival;
+	int	ival;
 }
 
 
@@ -107,8 +109,9 @@
 %%
 
 programa:
-	codigo {
-		if(cantErrores>0)
+	codigo
+	{
+		if(cantErrores > 0)
 			cout<<endl<<endl<<"***ERROR: tipo - Semantico***"<<endl;
 		else
 			cout<<endl<<endl<<"Exito!"<<endl;
@@ -116,7 +119,7 @@ programa:
 	;
 
 codigo:
-	cabecera principal
+	cabecera {fprintf(yysalida, "#!/bin/bash\n");} principal
 	|
 	principal
 	;
@@ -159,6 +162,7 @@ cabecera:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
 		free($2);
 	}
 	|
@@ -220,21 +224,22 @@ cuerpo:
 	|
 	estructura
 	|
-	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA cuerpo
+	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA
 	{
 		if(strcmp($1, "do"))
 		{
-			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cout<<"Error en palabra reservada. 6789Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		free($1);
 	}
+	cuerpo
 	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA
 	{
 		if(strcmp($1, "do"))
 		{
-			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cout<<"Error en palabra reservada. 12314Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		free($1);
@@ -308,6 +313,13 @@ scan:
 				cantErrores++;
 			}
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"read ");
+			fprintf(yysalida, "%s \n", $8);
+		}
+
 		free($1);
 		free($8);
 	}
@@ -321,6 +333,13 @@ print:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "echo ");
+			fprintf(yysalida, "%s \n", $4);
+		}
+
 		free($1);
 	}
 	|
@@ -352,6 +371,17 @@ print:
 				cantErrores++;
 			}
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "echo ");
+			fprintf(yysalida, "%s", $4);
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $9);
+			fprintf(yysalida, "%s", $6);
+			fprintf(yysalida, "\n");
+		}
+
 		free($1);
 		free($5);
 		free($9);
@@ -381,10 +411,20 @@ print:
 			{
 			}
 			else{
-				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO435 "<<"Linea: "<<lineas<<"*"<<endl;
 				cantErrores++;
 			}
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "echo ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $8);
+			fprintf(yysalida, "%s", $5);
+			fprintf(yysalida, "\n");
+		}
+
 		free($1);
 		free($4);
 		free($8);
@@ -419,6 +459,14 @@ print:
 			}
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "echo ");
+			fprintf(yysalida, "%s", $4);
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s \n", $8);
+		}
+
 		free($1);
 		free($5);
 		free($8);
@@ -451,6 +499,13 @@ print:
 				cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
 				cantErrores++;
 			}
+		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "echo ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s \n", $7);
 		}
 
 		free($1);
@@ -511,6 +566,16 @@ print:
 			}
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "echo ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $9);
+			fprintf(yysalida, "%s", $5);
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s \n", $11);
+		}
+
 		free($1);
 		free($4);
 		free($6);
@@ -543,6 +608,20 @@ print:
 			cout<<endl<<"*ERROR: variable ->"<<$15<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "echo ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $11);
+			fprintf(yysalida, "%s", $5);
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $13);
+			fprintf(yysalida, "%s", $7);
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s \n", $15);
+		}
+
 		free($1);
 		free($11);
 		free($13);
@@ -565,6 +644,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -eq ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 		free($3);
 	}
@@ -577,6 +666,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -eq ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($3);
 	}
 	|
@@ -588,6 +687,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -eq ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 	}
 	|
@@ -605,6 +714,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -gt ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 		free($3);
 	}
@@ -623,6 +742,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -ge ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 		free($3);
 	}
@@ -641,6 +770,17 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -lt ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
+
 		free($1);
 		free($3);
 	}
@@ -659,6 +799,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -le ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 		free($3);
 	}
@@ -671,6 +821,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -gt ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($3);
 	}
 	|
@@ -682,6 +842,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -ge ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($3);
 	}
 	|
@@ -693,6 +863,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -lt ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($3);
 	}
 	|
@@ -704,6 +884,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -le ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($3);
 	}
 	|
@@ -715,6 +905,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -gt ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 	}
 	|
@@ -726,6 +926,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -ge ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 	}
 	|
@@ -737,6 +947,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -lt ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 	}
 	|
@@ -748,6 +968,16 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $1);
+			fprintf(yysalida, " -le ");
+			fprintf(yysalida, "$");
+			fprintf(yysalida, "%s", $3);
+		}
+
 		free($1);
 	}
 	;
@@ -760,6 +990,7 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		free($1);
 	}
 	|
 	RESERVADA ID PTOCOMA
@@ -774,6 +1005,7 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		free($1);
 		free($2);
 	}
 	|
@@ -784,6 +1016,7 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		free($1);
 	}
 	|
 	RESERVADA PARENTESISABR ID PARENTESISCERR PTOCOMA
@@ -798,6 +1031,7 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		free($1);
 		free($3);
 	}
 	;
@@ -813,9 +1047,9 @@ declaracion:
 		}
 		else
 		{
-			auto tipo = strdup($1);
-			auto id = strdup($2);
-			auto aux = make_tuple(tipo,id);
+			char *tipo = strdup($1);
+			char *id = strdup($2);
+			tupla aux = make_tuple(tipo,id);
 
 			insertar_tabla_sim(aux);
 			//imprimir_tabla_sim();
@@ -848,6 +1082,13 @@ declaracion:
 			cantErrores++;
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$2);
+			fprintf(yysalida,"=");
+			fprintf(yysalida,"%d\n",$4);
+		}
+
 		free($1);
 		free($2);
 	}
@@ -873,6 +1114,14 @@ declaracion:
 		{
 			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
+		}
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$2);
+			fprintf(yysalida,"=");
+			fprintf(yysalida,"'");
+			fprintf(yysalida,"%s",$5);
+			fprintf(yysalida,"'\n");
 		}
 
 		free($1);
@@ -900,6 +1149,15 @@ declaracion:
 		{
 			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
+		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$2);
+			fprintf(yysalida,"=");
+			fprintf(yysalida,"'");
+			fprintf(yysalida,"%d",$5);
+			fprintf(yysalida,"'\n");
 		}
 
 		free($1);
@@ -935,6 +1193,14 @@ declaracion:
 			cantErrores++;
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$2);
+			fprintf(yysalida,"=");
+			fprintf(yysalida,"%s",$4);
+			fprintf(yysalida,"\n");
+		}
+
 		free($1);
 		free($2);
 		free($4);
@@ -963,6 +1229,14 @@ asignacion:
 			cantErrores++;
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"=");
+			fprintf(yysalida,"%s",$3);
+			fprintf(yysalida,"\n");
+		}
+
 		free($1);
 		free($3);
 	}
@@ -980,6 +1254,14 @@ asignacion:
 			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
+		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"=");
+			fprintf(yysalida,"%d",$3);
+			fprintf(yysalida,"\n");
 		}
 
 		free($1);
@@ -1006,6 +1288,15 @@ asignacion:
 			cantErrores++;
 		}
 
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"+=");
+			fprintf(yysalida,"%s",$3);
+			fprintf(yysalida,"\n");
+		}
+
 		free($1);
 		free($3);
 	}
@@ -1023,6 +1314,14 @@ asignacion:
 			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
+		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"+=");
+			fprintf(yysalida,"%d",$3);
+			fprintf(yysalida,"\n");
 		}
 
 		free($1);
@@ -1049,6 +1348,14 @@ asignacion:
 			cantErrores++;
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"-=");
+			fprintf(yysalida,"%s",$3);
+			fprintf(yysalida,"\n");
+		}
+
 		free($1);
 		free($3);
 	}
@@ -1067,6 +1374,15 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"-=");
+			fprintf(yysalida,"%d",$3);
+			fprintf(yysalida,"\n");
+		}
+
 
 		free($1);
 	}
@@ -1092,6 +1408,14 @@ asignacion:
 			cantErrores++;
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"*=");
+			fprintf(yysalida,"%s",$3);
+			fprintf(yysalida,"\n");
+		}
+
 		free($1);
 		free($3);
 	}
@@ -1111,6 +1435,14 @@ asignacion:
 			cantErrores++;
 		}
 
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"*=");
+			fprintf(yysalida,"%s",$3);
+			fprintf(yysalida,"\n");
+		}
+
 		free($1);
 	}
 	|
@@ -1122,6 +1454,14 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"=\n");
+
+		}
+
 		free($1);
 	}
 	|
@@ -1284,6 +1624,14 @@ suma:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"+");
+			fprintf(yysalida,"%s",$3);
+			fprintf(yysalida,"\n");
+		}
+
 		free($3);
 	}
 	|
@@ -1303,6 +1651,15 @@ suma:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida,"%s",$1);
+			fprintf(yysalida,"+");
+			fprintf(yysalida,"%s",$3);
+			fprintf(yysalida,"\n");
+		}
+
 		free($1);
 		free($3);
 	}
@@ -1651,6 +2008,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
+	yysalida = fopen("salida.sh", "w");
 	yyin = archivo;
 
 	cargar_reservada();
@@ -1662,4 +2020,8 @@ int main(int argc, char **argv)
 	eliminar_reservada();
 	eliminar_reservada_tipo();
 
+	fclose(yyin);
+	fclose(yysalida);
+
+	return 0;
 }

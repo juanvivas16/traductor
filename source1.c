@@ -4,9 +4,9 @@
 int main()
 {
 	// Declaracion de las variables
-	int n = 0;
+	int n;
 	int i = 1;
-	int j = 1;
+	int j;
 
 	// Operaciones
 	scanf ("%d",&n);

@@ -6,14 +6,14 @@ int main()
   int a = 1;
   int b = 1;
   int c = 1;
-  int N = 0;
+  int N;
 
   scanf("%d", &N);
   printf("La serie con %d terminos es: \n", N);
   printf("%d, %d, %d", a, b, c);
 
   int i = 4;
-  int termino = 0;
+  int termino;
 
   do {
     termino = a + b + c;

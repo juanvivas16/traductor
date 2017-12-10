@@ -1,41 +1,33 @@
 #include <asdf>
-#include <asdf.h>
-#include "asdf"
-#include "asdf.h"
-
-//  int b = 4.5;
+#include <fdssdfg>
 
 int main()
 {
 
-  int a = 0;
+  int a = 645.4;
   a = 2;
   float z;
-  char y = 'a';
-
-//scanf("%d", &a);
-
-//scanf("%c", &y);
+  char y = '7';
+  int b = 2;
+  b= a;
+  a = 3;
+  a = b+a;
 
 scanf("%c", &y);
 
+printf("hola mundo");
+
+printf("hola %d mundo", a);
+
+printf("%d hola mundo", a);
+
+printf("hola %d", a);
+
+printf("%d", a);
+
 printf("%c , %f", y, z);
 
-if (a == 4) {
-  int b = 0;
-}
-
-if (a == 4) {
-  int c = 0;
-}
-
-do{
- int d = 0;
-}if (d == 4);
-
- do{
-  int f = 0;
-}while (f == 4);
+printf("%c , %f , %d", y, z, a);
 
   return 0;
 }

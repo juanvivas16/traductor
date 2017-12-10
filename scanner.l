@@ -52,7 +52,7 @@ DIGITO [0-9]
 										}
 
 (-)?{DIGITO}+							{yylval.ival=atoi(yytext); return NUM;}
-(-)?{DIGITO}*"."{DIGITO}+	{yylval.ival=atof(yytext); return NUM;}
+(-)?{DIGITO}*"."{DIGITO}+	{yylval.ival=atoi(yytext); return NUM;}
 
 "."       	{return PUNTO;}
 ";"					{return PTOCOMA;}
@@ -123,7 +123,7 @@ DIGITO [0-9]
 													BEGIN(INITIAL);
 													}}
 
-				<secomillas>[A-Za-z0-9.-_, ]+ {return TEXTO;}
+				<secomillas>[A-Za-z0-9.-_, ]+ {yylval.strval=strdup(yytext); return TEXTO;}
 				<secomillas>"%"[dfc] {yylval.strval=strdup(yytext); return PRCVAL;}
 
 .
