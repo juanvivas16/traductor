@@ -4,5 +4,6 @@
 lex.yy.c
 *scanner
 *parser
+salida.sh
 parser.tab.c
 parser.tab.h
