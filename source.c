@@ -1,45 +1,34 @@
 #include <asdf>
+#include <asdf.h>
+#include "asdf"
+#include "asdf.h"
 
 //  int b = 4.5;
 
 int main()
 {
-  int a = 4;
-  int b = 4.5;
 
-  char c = 342;
-  char d = 'a';
+  int a = 0;
+  a = 2;
+  float z;
 
-  float e = 34234;
-  float f = 2425.345345;
+scanf("%d", &z);
 
-  int g = 'a';
-  float h = 'h';
+if (a == 4) {
+  int b = 0;
+}
 
-  char i = '1';
-//BIEN
-  int j = a;
-  float k = f;
-  char l = d;
-//MAL
-  int m = d;
-  float n = i;
-  char o = a;
+if (a == 4) {
+  int c = 0;
+}
 
-  int xx = yy;
+do{
+ int d = 0;
+}if (d == 4);
 
-  a = j;
-  d = k;
-
-  aa = bb;
-
-  a = b + j;
-
-  b = c + d + g + y;
-
-  xx = 6 + 45 + 4565 +456 + d + df + 432+ ad;
-
-
+ do{
+  int f = 0;
+}while (f == 4);
 
   return 0;
 }

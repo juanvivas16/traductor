@@ -123,20 +123,76 @@ codigo:
 
 cabecera:
 	cabecera NUMERAL RESERVADA MENOR ID MAYOR
+	{
+		if(strcmp($3, "include"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	NUMERAL RESERVADA MENOR ID MAYOR
+	{
+		if(strcmp($2, "include"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($2);
+	}
 	|
 	cabecera NUMERAL RESERVADA COMILLAS TEXTO COMILLAS
+	{
+		if(strcmp($3, "include"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	NUMERAL RESERVADA COMILLAS TEXTO COMILLAS
+	{
+		if(strcmp($2, "include"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($2);
+	}
 	|
 	cabecera NUMERAL RESERVADA MENOR ID PUNTO ID MAYOR
+	{
+		if(strcmp($3, "include"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($3);
+	}
 	|
 	NUMERAL RESERVADA MENOR ID PUNTO ID MAYOR
+	{
+		if(strcmp($2, "include"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($2);
+	}
 	;
 
 principal:
 	TIPO RESERVADA PARENTESISABR PARENTESISCERR LLAVEABR cuerpo LLAVECERR
+	{
+		if(strcmp($2, "main"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<". Quizo decir 'main'"<<endl;
+			cantErrores++;
+		}
+		free($2);
+	}
 	;
 
 cuerpo:
@@ -165,42 +221,225 @@ cuerpo:
 	estructura
 	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA cuerpo
+	{
+		if(strcmp($1, "do"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA
+	{
+		if(strcmp($1, "do"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	estructura LLAVEABR cuerpo LLAVECERR cuerpo
 	|
 	estructura LLAVEABR cuerpo LLAVECERR
 	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR cuerpo
+	{
+		if(strcmp($1, "else"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR
+	{
+		if(strcmp($1, "else"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	RESERVADA cuerpo
 	;
 
 estructura:
 	RESERVADA PARENTESISABR condicional PARENTESISCERR
+	{
+		if(strcmp($1, "while") && strcmp($1, "if"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	;
 
 scan:
 	RESERVADA PARENTESISABR COMILLAS PRCVAL COMILLAS COMA  AMPERSAND ID PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "scanf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($8))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$8<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+	/*	else if((strcmp($4,"%d") && strcmp(get<0>(obtener_tupla_por_id($8)), "int"))
+		&&
+		(strcmp($4,"%f") && strcmp(get<0>(obtener_tupla_por_id($8)), "float"))
+		&&
+		(strcmp($4,"%c") && strcmp(get<0>(obtener_tupla_por_id($8)), "char")) )
+		{
+			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}*/
+		free($1);
+		free($8);
+	}
 	;
 
 print:
 	RESERVADA PARENTESISABR COMILLAS TEXTO COMILLAS PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "printf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+	}
 	|
 	RESERVADA PARENTESISABR COMILLAS TEXTO PRCVAL TEXTO COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "printf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($9))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$9<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($9);
+	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "printf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($8))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$8<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($8);
+	}
 	|
 	RESERVADA PARENTESISABR COMILLAS TEXTO PRCVAL COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "printf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($8))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$8<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($8);
+	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "printf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($7))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$7<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($7);
+	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO PRCVAL COMILLAS COMA ID COMA ID PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "printf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($9))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$9<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($11))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$11<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($9);
+		free($11);
+	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO PRCVAL TEXTO PRCVAL COMILLAS COMA ID COMA ID COMA ID PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "printf"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($11))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$11<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($13))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$13<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		else if(!esta_tabla_sim($15))
+		{
+			//imprimir_tabla_sim();
+			cout<<endl<<"*ERROR: variable ->"<<$15<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		free($1);
+		free($11);
+		free($13);
+		free($15);
+	}
 	;
 
 condicional:
@@ -208,13 +447,13 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			////imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -226,7 +465,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -237,7 +476,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -248,13 +487,13 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -266,13 +505,13 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -284,13 +523,13 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -302,13 +541,13 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -320,7 +559,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -331,7 +570,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -342,7 +581,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -353,7 +592,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -364,7 +603,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -375,7 +614,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -386,7 +625,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -397,7 +636,7 @@ condicional:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -407,26 +646,48 @@ condicional:
 
 retornar:
 	RESERVADA NUM PTOCOMA
+	{
+		if(strcmp($1, "return"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+	}
 	|
 	RESERVADA ID PTOCOMA
 	{
 		if(!esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}else if(strcmp($1, "return"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		free($2);
 	}
 	|
 	RESERVADA PARENTESISABR NUM PARENTESISCERR PTOCOMA
+	{
+		if(strcmp($1, "return"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+	}
 	|
 	RESERVADA PARENTESISABR ID PARENTESISCERR PTOCOMA
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}else if(strcmp($1, "return"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		free($3);
@@ -438,7 +699,7 @@ declaracion:
 	{
 		if(esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -449,7 +710,7 @@ declaracion:
 			auto aux = make_tuple(tipo,id);
 
 			insertar_tabla_sim(aux);
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 		}
 
 		free($1);
@@ -460,7 +721,7 @@ declaracion:
 	{
 		if(esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -471,7 +732,7 @@ declaracion:
 			auto aux = make_tuple(tipo,id);
 
 			insertar_tabla_sim(aux);
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 		}
 		else
 		{
@@ -487,7 +748,7 @@ declaracion:
 	{
 		if(esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -498,7 +759,7 @@ declaracion:
 			auto aux = make_tuple(tipo,id);
 
 			insertar_tabla_sim(aux);
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 		}
 		else
 		{
@@ -514,7 +775,7 @@ declaracion:
 	{
 		if(esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -525,7 +786,7 @@ declaracion:
 			auto aux = make_tuple(tipo,id);
 
 			insertar_tabla_sim(aux);
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 		}
 		else
 		{
@@ -541,13 +802,13 @@ declaracion:
 	{
 		if(esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- YA declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($4))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$4<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -558,7 +819,7 @@ declaracion:
 			auto aux = make_tuple(tipo,id);
 
 			insertar_tabla_sim(aux);
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 		}
 		else
 		{
@@ -577,19 +838,19 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -602,13 +863,13 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		else if(!strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -620,19 +881,19 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -645,13 +906,13 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		else if(!strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -663,19 +924,19 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -688,13 +949,13 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		else if(!strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -706,19 +967,19 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(strcmp(get<0>(obtener_tupla_por_id($1)),get<0>(obtener_tupla_por_id($3))))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variables ->"<<$1<< " "<< $3<<"<-"" TIPOS difieren. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -731,13 +992,13 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-		else if(strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
+		else if(!strcmp(get<0>(obtener_tupla_por_id($1)), "char"))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -749,7 +1010,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -760,7 +1021,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -771,7 +1032,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -782,7 +1043,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -793,19 +1054,19 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($5))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$5<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -818,13 +1079,13 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -836,13 +1097,13 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($5))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$5<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -854,7 +1115,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -865,7 +1126,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -876,7 +1137,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -887,7 +1148,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -898,7 +1159,7 @@ asignacion:
 	{
 		if(!esta_tabla_sim($2))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -911,7 +1172,7 @@ suma:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -924,13 +1185,13 @@ suma:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -944,7 +1205,7 @@ suma:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -955,7 +1216,7 @@ suma:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -968,7 +1229,7 @@ resta:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -981,13 +1242,13 @@ resta:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1001,7 +1262,7 @@ resta:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1012,7 +1273,7 @@ resta:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1025,7 +1286,7 @@ multi:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1038,13 +1299,13 @@ multi:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1058,7 +1319,7 @@ multi:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1069,7 +1330,7 @@ multi:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1082,7 +1343,7 @@ div:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1095,13 +1356,13 @@ div:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
 		else if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1115,7 +1376,7 @@ div:
 	{
 		if(!esta_tabla_sim($1))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
@@ -1126,7 +1387,7 @@ div:
 	{
 		if(!esta_tabla_sim($3))
 		{
-			imprimir_tabla_sim();
+			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
