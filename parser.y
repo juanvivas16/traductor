@@ -228,9 +228,12 @@ cuerpo:
 	{
 		if(strcmp($1, "do"))
 		{
-			cout<<"Error en palabra reservada. 6789Linea: "<<lineas<<"*"<<endl;
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else if(cantErrores == 0)
+			fprintf(yysalida, "do");
+
 		free($1);
 	}
 	cuerpo
@@ -242,6 +245,9 @@ cuerpo:
 			cout<<"Error en palabra reservada. 12314Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else if(cantErrores == 0)
+			fprintf(yysalida, "do");
+
 		free($1);
 	}
 	|
@@ -256,6 +262,9 @@ cuerpo:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else if(cantErrores == 0)
+			fprintf(yysalida, "else");
+
 		free($1);
 	}
 	|
@@ -266,6 +275,9 @@ cuerpo:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else if(cantErrores == 0)
+			fprintf(yysalida, "else");
+
 		free($1);
 	}
 	|
@@ -280,6 +292,13 @@ estructura:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		else if(!strcmp($1, "while") && cantErrores == 0)
+			fprintf(yysalida,"while");
+
+		else if(!strcmp($1, "if") && cantErrores == 0)
+			fprintf(yysalida,"if");
+
+
 		free($1);
 	}
 	;
@@ -315,10 +334,7 @@ scan:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"read ");
-			fprintf(yysalida, "%s \n", $8);
-		}
+			fprintf(yysalida,"read %s\n", $8);
 
 		free($1);
 		free($8);
@@ -335,10 +351,7 @@ print:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "echo ");
-			fprintf(yysalida, "%s \n", $4);
-		}
+			fprintf(yysalida, "echo %s\n", $4);
 
 		free($1);
 	}
@@ -373,14 +386,7 @@ print:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "echo ");
-			fprintf(yysalida, "%s", $4);
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $9);
-			fprintf(yysalida, "%s", $6);
-			fprintf(yysalida, "\n");
-		}
+			fprintf(yysalida, "echo %s $%s %s\n",$4,$9,$6);
 
 		free($1);
 		free($5);
@@ -417,13 +423,7 @@ print:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "echo ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $8);
-			fprintf(yysalida, "%s", $5);
-			fprintf(yysalida, "\n");
-		}
+			fprintf(yysalida, "echo $%s %s\n",$8,$5);
 
 		free($1);
 		free($4);
@@ -460,12 +460,7 @@ print:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "echo ");
-			fprintf(yysalida, "%s", $4);
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s \n", $8);
-		}
+			fprintf(yysalida, "echo %s $%s\n",$4,$8);
 
 		free($1);
 		free($5);
@@ -502,11 +497,7 @@ print:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "echo ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s \n", $7);
-		}
+			fprintf(yysalida, "echo $%s\n",$7);
 
 		free($1);
 		free($4);
@@ -567,14 +558,7 @@ print:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "echo ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $9);
-			fprintf(yysalida, "%s", $5);
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s \n", $11);
-		}
+		fprintf(yysalida, "echo $%s %s $%s\n",$9,$5,$11);
 
 		free($1);
 		free($4);
@@ -610,17 +594,7 @@ print:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "echo ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $11);
-			fprintf(yysalida, "%s", $5);
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $13);
-			fprintf(yysalida, "%s", $7);
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s \n", $15);
-		}
+			fprintf(yysalida, "echo $%s %s $%s %s $%s\n",$11,$5,$13,$7,$15);
 
 		free($1);
 		free($11);
@@ -646,13 +620,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -eq ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -eq $%s ]\n",$1,$3);
 
 		free($1);
 		free($3);
@@ -668,13 +636,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -eq ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%d -eq $%s ]\n",$1,$3);
 
 		free($3);
 	}
@@ -689,13 +651,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -eq ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -eq $%d ]\n",$1,$3);
 
 		free($1);
 	}
@@ -716,13 +672,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -gt ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -gt $%s ]\n",$1,$3);
 
 		free($1);
 		free($3);
@@ -744,13 +694,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -ge ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -ge $%s ]\n",$1,$3);
 
 		free($1);
 		free($3);
@@ -772,13 +716,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -lt ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -lt $%s ]\n",$1,$3);
 
 
 		free($1);
@@ -801,13 +739,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -le ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -le $%s ]\n",$1,$3);
 
 		free($1);
 		free($3);
@@ -823,13 +755,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -gt ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%d -gt $%s ]\n",$1,$3);
 
 		free($3);
 	}
@@ -844,13 +770,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -ge ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%d -ge $%s ]\n",$1,$3);
 
 		free($3);
 	}
@@ -865,13 +785,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -lt ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%d -lt $%s ]\n",$1,$3);
 
 		free($3);
 	}
@@ -886,13 +800,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -le ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%d -le $%s ]\n",$1,$3);
 
 		free($3);
 	}
@@ -907,13 +815,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -gt ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -gt $%d ]\n",$1,$3);
 
 		free($1);
 	}
@@ -928,13 +830,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -ge ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -ge $%d ]\n",$1,$3);
 
 		free($1);
 	}
@@ -949,13 +845,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -lt ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -lt $%d ]\n",$1,$3);
 
 		free($1);
 	}
@@ -970,13 +860,7 @@ condicional:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $1);
-			fprintf(yysalida, " -le ");
-			fprintf(yysalida, "$");
-			fprintf(yysalida, "%s", $3);
-		}
+			fprintf(yysalida,"[ $%s -le $%d ]\n",$1,$3);
 
 		free($1);
 	}
@@ -1055,6 +939,8 @@ declaracion:
 			//imprimir_tabla_sim();
 		}
 
+		//No se traduce.
+
 		free($1);
 		free($2);
 	}
@@ -1083,11 +969,7 @@ declaracion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$2);
-			fprintf(yysalida,"=");
-			fprintf(yysalida,"%d\n",$4);
-		}
+			fprintf(yysalida,"%s=%d\n",$2,$4);
 
 		free($1);
 		free($2);
@@ -1115,14 +997,9 @@ declaracion:
 			cout<<endl<<"*ERROR: TIPO de dato INCORRECTO "<<"Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$2);
-			fprintf(yysalida,"=");
-			fprintf(yysalida,"'");
-			fprintf(yysalida,"%s",$5);
-			fprintf(yysalida,"'\n");
-		}
+			fprintf(yysalida,"%s='$%s'\n",$2,$5);
 
 		free($1);
 		free($2);
@@ -1152,13 +1029,7 @@ declaracion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$2);
-			fprintf(yysalida,"=");
-			fprintf(yysalida,"'");
-			fprintf(yysalida,"%d",$5);
-			fprintf(yysalida,"'\n");
-		}
+			fprintf(yysalida,"%s='%d'\n",$2,$5);
 
 		free($1);
 		free($2);
@@ -1194,12 +1065,7 @@ declaracion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$2);
-			fprintf(yysalida,"=");
-			fprintf(yysalida,"%s",$4);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=$%s\n",$2,$4);
 
 		free($1);
 		free($2);
@@ -1230,12 +1096,7 @@ asignacion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"=");
-			fprintf(yysalida,"%s",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=$%s\n",$1,$3);
 
 		free($1);
 		free($3);
@@ -1257,12 +1118,7 @@ asignacion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"=");
-			fprintf(yysalida,"%d",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=%d\n",$1,$3);
 
 		free($1);
 	}
@@ -1288,14 +1144,8 @@ asignacion:
 			cantErrores++;
 		}
 
-
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"+=");
-			fprintf(yysalida,"%s",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=`expr $%s + $%s`\n",$1,$1,$3);
 
 		free($1);
 		free($3);
@@ -1317,12 +1167,7 @@ asignacion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"+=");
-			fprintf(yysalida,"%d",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=`expr $%s + %d`\n",$1,$1,$3);
 
 		free($1);
 	}
@@ -1349,12 +1194,8 @@ asignacion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"-=");
-			fprintf(yysalida,"%s",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=`expr $%s - $%s`\n",$1,$1,$3);
+
 
 		free($1);
 		free($3);
@@ -1376,12 +1217,7 @@ asignacion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"-=");
-			fprintf(yysalida,"%d",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=`expr $%s - %d`\n",$1,$1,$3);
 
 
 		free($1);
@@ -1409,12 +1245,8 @@ asignacion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"*=");
-			fprintf(yysalida,"%s",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=`expr $%s \\* $%s`\n",$1,$1,$3);
+
 
 		free($1);
 		free($3);
@@ -1436,12 +1268,7 @@ asignacion:
 		}
 
 		if(cantErrores == 0)
-		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"*=");
-			fprintf(yysalida,"%s",$3);
-			fprintf(yysalida,"\n");
-		}
+			fprintf(yysalida,"%s=`expr $%s \\* %d`\n",$1,$1,$3);
 
 		free($1);
 	}
@@ -1518,6 +1345,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$5<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr $%s %% $%s`\n",$1,$3,$5);
+
 		free($1);
 		free($3);
 		free($5);
@@ -1537,6 +1368,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr $%s %% %d`\n",$1,$3,$5);
+
 		free($1);
 		free($3);
 	}
@@ -1555,6 +1390,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$5<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr %d %% $%s`\n",$1,$3,$5);
+
 		free($1);
 		free($5);
 	}
@@ -1567,6 +1406,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr %d %% %d`\n",$1,$3,$5);
+
 		free($1);
 	}
 	|
@@ -1578,6 +1421,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr $%s + 1`\n",$1,$1);
+
 		free($1);
 	}
 	|
@@ -1589,6 +1436,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr $%s - 1`\n",$1,$1);
+
 		free($1);
 	}
 	|
@@ -1600,6 +1451,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr $%s + 1`\n",$2,$2);
+
 		free($2);
 	}
 	|
@@ -1611,6 +1466,10 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$2<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+			fprintf(yysalida,"%s=`expr $%s - 1`\n",$2,$2);
+
 		free($2);
 	}
 	;
