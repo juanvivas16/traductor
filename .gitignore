@@ -7,3 +7,6 @@ lex.yy.c
 salida.sh
 parser.tab.c
 parser.tab.h
+informe_compiladores.aux
+informe_compiladores.log
+informe_compiladores.synctex.gz
