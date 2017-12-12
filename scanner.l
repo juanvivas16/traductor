@@ -126,7 +126,7 @@ DIGITO [0-9]
 				<secomillas>[A-Za-z0-9.-_, ]+ {yylval.strval=strdup(yytext); return TEXTO;}
 				<secomillas>"%"[dfc] {yylval.strval=strdup(yytext); return PRCVAL;}
 
-.
+.			{cout<<"Palabra no reconocida por ninguna expresion."<<endl;}
 
 %%
 

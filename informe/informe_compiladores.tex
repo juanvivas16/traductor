@@ -51,7 +51,7 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Compiladores U-2017 \\ Informe Proyecto Traductor \\ C a Shell Script} % Title
+\title{Compiladores U-2017 \\ Informe Proyecto \\ Traductor \\ C a Bash} % Title
 
 \author{Juan Andr\'es Vivas\\
 		Juli\'an Brice\~no} % Author name
@@ -72,37 +72,90 @@
 
 \section{Descripci\'on del problema}
 
-	Se plantea hacer una traduccion simple del lenguaje C a lengaje shell, cabe destacar que estamos
-	pasando de un lenguaje fuertemente tipado a uno debilmente tipado.
+	Se plantea hacer una traducci\'on simple del lenguaje C a Bash, cabe destacar que se est\'a
+	pasando de un lenguaje fuertemente tipado a uno debilmente tipado.\\
 
-	Traduciremos expresiones matematicas sencillas al igual que la estructura de decision if
-	y de repeticion while.
-
+	El objetivo es traducir expresiones matem\'aticas sencillas, lectura de variables, impresiones
+	por pantalla y la estructura de decision if y de repeticion while.
 
 \subsection{Alcance}
 
-	Lograr traducir expresiones matematicas simples, tales como: sumas, restas, multiplicaciones
-	y divisiones, ademas de calcular el modulo.
+	Lograr traducir expresiones matem\'aticas simples, tales como: sumas, restas, multiplicaciones,
+	divisiones y calculo de modulo. Las expresiones se limitaran a tener un solo tipo de operaci\'on. \\
 
-	Expresiones logicas las cuales sirven para el if y while.
+	Se tendran expresiones l\'ogicas las cuales sirven para las estructuras if y while, limitadas a un
+	solo operador l\'ogico.\\
+
+	Se leera una sola variable por la entrada estandar y se acoto a 3 varibles la cantidad que se pueden
+	imprimir.\\
+
+	El tipo de datos en C a usar son int, float y char. A pesar de reconocer los flotantes, al momento de traducir
+	solo se tomara en cuenta su parte entera.
 
 \subsection{Especificaci\'on del lenguaje fuente}
 
-	El lenguaje fuente es C reducido, ya que solo reconoceremos las bibliotecas ( sin validacion) y
-	lo que este dentro de la funcion main (sin ningun parametro). Tiene los tipos de datos entero,
-	caracter y flotante.
+	El lenguaje fuente es C reducido, limitado a operaciones matematicas sencillas y las estructuras
+	if y while. Se reconocera las bibliotecas que pueda tener y lo que este dentro de la funcion
+	main sin ningun par\'ametro. \\
 
+	Tiene los tipos de datos entero, caracter y flotante. Se podran declarar y asignar variables y valores.\\
 
+	Se leera una sola variable por la entrada estandar y la salida se acoto hasta 3 variables. \\
+
+	Todo lo demas no sera reconocido por nuestra gramatica ni traducido.
 
 \subsection{Especificaci\'on del lenguaje a traducir}
 
+El lenguaje de consola Bash (Bourne again shell) interpreta ordenes en una shell de Unix.
+Interpretara operaciones matematicas simples, comparacion de variables, lectura y escritura de variables
+por la entrada y salida estandar.
+
 \section{Soluci\'on al problema planteado}
+
+La traduccion se realiza a partir de verificar la correctitud del lenguaje fuente, de lo contrario
+no se realiza.\\
+
+Se divide en las siguiente secciones.
 
 \subsection{An\'alisis L\'exico}
 
+Se encarga de detectar todos los lexemas y pasarlos al analisis sintactico como tokens.\\
+Contiene el siguiente conjunto de expresiones regulares:\\
+
+\begin{lstlisting}
+
+LETRA [a-zA-Z_]
+DIGITO [0-9]
+{LETRA}({LETRA}|{DIGITO})*
+(-)?{DIGITO}+
+(-)?{DIGITO}*"."{DIGITO}+
+
+\end{lstlisting}
+
+Las cuales hacen match para detectar identificadores, tipos de datos, palabras reservadas y
+valores numericos.\\
+
+Tambien detecta el siguiente conjunto de caracteres: \\
+
+\begin{lstlisting}
+. ; { } ( ) < > ! = + - * / ^ : # &
+<= >= != += -= *= /= %= == || &&
+++ -- /% , ' "
+\end{lstlisting}
+
+Cada expresion regular envia un token al analizador sintactico al igual que cada caracter antes descrito
+produce un token.\\
+
+El analizador lexico tambien se encarga de eliminar del lenguaje fuente los espacios en blanco, saltos
+de linea y tabulaciones. Cuenta saltos de linea y rechaza aquellos caracteres que no coincidan con ningun
+patron valido definido.
+
+
 \subsection{An\'alisis Sint\'actico}
 
-Gramatica:
+El analisis sintactico se realiza a traves de la siguiente gramatica, el cual recibe los tokens
+y los agrupa de acuerdo a las reglas de produccion de la gramatica que se presenta a continuacion.
+
 \begin{lstlisting}
 
 programa:
@@ -124,7 +177,7 @@ principal:
 
 cuerpo:
 	asignacion cuerpo | asignacion | declaracion cuerpo | declaracion
-	| retornar cuerpo | retornar | scan cuerpo | scan 
+	| retornar cuerpo | retornar | scan cuerpo | scan
 	| print cuerpo | print | estructura cuerpo | estructura
 	| RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA cuerpo
 	| RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA
@@ -177,12 +230,12 @@ asignacion:
 	ID IGUAL ID PTOCOMA | ID IGUAL NUM PTOCOMA | ID SUM_ASSIGN ID PTOCOMA
 	| ID SUM_ASSIGN NUM PTOCOMA | ID SUB_ASSIGN ID PTOCOMA
 	| ID SUB_ASSIGN NUM PTOCOMA | ID MUL_ASSIGN ID PTOCOMA
-	| ID MUL_ASSIGN NUM PTOCOMA | ID IGUAL suma PTOCOMA 
-	| ID IGUAL resta PTOCOMA | ID IGUAL multi PTOCOMA 
+	| ID MUL_ASSIGN NUM PTOCOMA | ID IGUAL suma PTOCOMA
+	| ID IGUAL resta PTOCOMA | ID IGUAL multi PTOCOMA
 	| ID IGUAL div PTOCOMA | ID IGUAL ID PORCENTAJE ID PTOCOMA
-	| ID IGUAL ID PORCENTAJE NUM PTOCOMA 
+	| ID IGUAL ID PORCENTAJE NUM PTOCOMA
 	| ID IGUAL NUM PORCENTAJE ID PTOCOMA
-	| ID IGUAL NUM PORCENTAJE NUM PTOCOMA | ID INC PTOCOMA 
+	| ID IGUAL NUM PORCENTAJE NUM PTOCOMA | ID INC PTOCOMA
 	| ID DEC PTOCOMA | INC ID PTOCOMA | DEC ID PTOCOMA;
 
 suma:
@@ -203,11 +256,29 @@ div:
 
 \end{lstlisting}
 
+La tabla de simbolos se implemento con un vector dinamico de tuplas, el cual agrupa el tipo de dato
+con su identificador.
+
 
 \subsection{An\'alisis Sem\'antico}
 
+Se encarga de verificar que las palabras reservadas esten correctamente ubicadas dentro del lenguaje fuente.
+Las variables deben ser declaradas antes de ser usadas y al momento de hacer una asignacion los
+tipos de datos sean iguales.
+
 \subsection{Manejo de errores}
 
+Empieza en el analisis lexico, lleva la cuenta de las lineas que se van leyendo para poder decir
+en que linea se ubica un error en el caso de ser detectado, ademas de emitir un mensaje si no se llega
+a reconocer alguna palabra.\\
+
+El analisis semantico falla al momento de que no se pueda construir un arbol de derivacion correcto
+a partir de la gramatica definida. Se detiene la traduccion y se avisa en que linea esta el error sintactico.\\
+
+Al momento de revisar la semantica, se valida que todas las variables sean declaradas antes de invocarse,
+al momento de ser asignadas tengan el mismo tipo de dato y por ultimo que las palabras reservadas coincidan
+con su ubicacion y uso dentro del lenguaje. De lo contrario se detiene la traduccion y se emite un mensaje
+de error con la linea donde se encontro y la variable o palabra reservada involucrada.
 
 
 
