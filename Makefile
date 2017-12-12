@@ -16,7 +16,7 @@ bison:
 
 flex:
 	$(FLEX) scanner.l
-s
+
 flexdebug:
 	$(FLEX) scannerdebug.l
 
