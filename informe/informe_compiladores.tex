@@ -7,7 +7,7 @@
 % http://www.LaTeXTemplates.com
 %
 % Original author:
-% Linux and Unix Users Group at Virginia Tech Wiki 
+% Linux and Unix Users Group at Virginia Tech Wiki
 % (https://vtluug.org/wiki/Example_LaTeX_chem_lab_report)
 %
 % License:
@@ -26,7 +26,7 @@
 \usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
-\usepackage{amsmath} % Required for some math elements 
+\usepackage{amsmath} % Required for some math elements
 \usepackage[spanish]{babel}
 \usepackage{hyperref}
 \usepackage{float}
@@ -35,8 +35,8 @@
 \usepackage[T1]{fontenc}
 \usepackage{mathtools}
 \usepackage[usenames,dvipsnames]{xcolor}
-\usepackage{lscape} 
-\usepackage{pdflscape} 
+\usepackage{lscape}
+\usepackage{pdflscape}
 \usepackage{fancyvrb}
 \usepackage{listings}
 \usepackage{fancybox}
@@ -72,9 +72,27 @@
 
 \section{Descripci\'on del problema}
 
+	Se plantea hacer una traduccion simple del lenguaje C a lengaje shell, cabe destacar que estamos
+	pasando de un lenguaje fuertemente tipado a uno debilmente tipado.
+
+	Traduciremos expresiones matematicas sencillas al igual que la estructura de decision if
+	y de repeticion while.
+
+
 \subsection{Alcance}
 
+	Lograr traducir expresiones matematicas simples, tales como: sumas, restas, multiplicaciones
+	y divisiones, ademas de calcular el modulo.
+
+	Expresiones logicas las cuales sirven para el if y while.
+
 \subsection{Especificaci\'on del lenguaje fuente}
+
+	El lenguaje fuente es C reducido, ya que solo reconoceremos las bibliotecas ( sin validacion) y
+	lo que este dentro de la funcion main (sin ningun parametro). Tiene los tipos de datos entero,
+	caracter y flotante.
+
+
 
 \subsection{Especificaci\'on del lenguaje a traducir}
 
@@ -83,6 +101,100 @@
 \subsection{An\'alisis L\'exico}
 
 \subsection{An\'alisis Sint\'actico}
+
+Gramatica:
+
+programa:
+	codigo;
+
+codigo:
+	cabecera principal | principal;
+
+cabecera:
+	cabecera NUMERAL RESERVADA MENOR ID MAYOR | NUMERAL RESERVADA MENOR ID MAYOR
+	|
+	cabecera NUMERAL RESERVADA COMILLAS TEXTO COMILLAS | NUMERAL RESERVADA COMILLAS TEXTO COMILLAS
+	|
+	cabecera NUMERAL RESERVADA MENOR ID PUNTO ID MAYOR | NUMERAL RESERVADA MENOR ID PUNTO ID MAYOR;
+
+principal:
+	TIPO RESERVADA PARENTESISABR PARENTESISCERR LLAVEABR cuerpo LLAVECERR;
+
+cuerpo:
+	asignacion cuerpo | asignacion | declaracion cuerpo | declaracion
+	|
+	retornar cuerpo | retornar | scan cuerpo | scan | print cuerpo | print | estructura cuerpo | estructura
+	|
+	RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA cuerpo | RESERVADA LLAVEABR cuerpo LLAVECERR estructura PTOCOMA
+	|
+	estructura LLAVEABR cuerpo LLAVECERR cuerpo | estructura LLAVEABR cuerpo LLAVECERR
+	|
+	RESERVADA LLAVEABR cuerpo LLAVECERR cuerpo | RESERVADA LLAVEABR cuerpo LLAVECERR | RESERVADA cuerpo;
+
+estructura:
+	RESERVADA PARENTESISABR condicional PARENTESISCERR;
+
+scan:
+	RESERVADA PARENTESISABR COMILLAS PRCVAL COMILLAS COMA  AMPERSAND ID PARENTESISCERR PTOCOMA;
+
+print:
+	RESERVADA PARENTESISABR COMILLAS TEXTO COMILLAS PARENTESISCERR PTOCOMA
+	|
+	RESERVADA PARENTESISABR COMILLAS TEXTO PRCVAL TEXTO COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	|
+	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	|
+	RESERVADA PARENTESISABR COMILLAS TEXTO PRCVAL COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	|
+	RESERVADA PARENTESISABR COMILLAS PRCVAL COMILLAS COMA ID PARENTESISCERR PTOCOMA
+	|
+	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO PRCVAL COMILLAS COMA ID COMA ID PARENTESISCERR PTOCOMA
+	|
+	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO PRCVAL TEXTO PRCVAL COMILLAS COMA ID COMA ID COMA ID PARENTESISCERR PTOCOMA;
+
+condicional:
+	ID IGUALD ID | NUM IGUALD ID | ID IGUALD NUM
+	|
+	ID MAYOR ID | ID MAYOR_I ID | ID MENOR ID | ID MENOR_I ID
+	|
+	NUM MAYOR ID | NUM MAYOR_I ID | NUM MENOR ID | NUM MENOR_I ID
+	|
+	ID MAYOR NUM | ID MAYOR_I NUM | ID MENOR NUM | ID MENOR_I NUM;
+
+retornar:
+	RESERVADA NUM PTOCOMA | RESERVADA ID PTOCOMA
+	|
+	RESERVADA PARENTESISABR NUM PARENTESISCERR PTOCOMA | RESERVADA PARENTESISABR ID PARENTESISCERR PTOCOMA;
+
+declaracion:
+	TIPO ID PTOCOMA | TIPO ID IGUAL NUM PTOCOMA | TIPO ID IGUAL COMISIMPLE ID COMISIMPLE PTOCOMA
+	|
+	TIPO ID IGUAL COMISIMPLE NUM COMISIMPLE PTOCOMA | TIPO ID IGUAL ID PTOCOMA;
+
+asignacion:
+	ID IGUAL ID PTOCOMA | ID IGUAL NUM PTOCOMA | ID SUM_ASSIGN ID PTOCOMA | ID SUM_ASSIGN NUM PTOCOMA
+	|
+	ID SUB_ASSIGN ID PTOCOMA | ID SUB_ASSIGN NUM PTOCOMA | ID MUL_ASSIGN ID PTOCOMA | ID MUL_ASSIGN NUM PTOCOMA
+	|
+	ID IGUAL suma PTOCOMA | ID IGUAL resta PTOCOMA | ID IGUAL multi PTOCOMA | ID IGUAL div PTOCOMA
+	|
+	ID IGUAL ID PORCENTAJE ID PTOCOMA | ID IGUAL ID PORCENTAJE NUM PTOCOMA | ID IGUAL NUM PORCENTAJE ID PTOCOMA
+	|
+	ID IGUAL NUM PORCENTAJE NUM PTOCOMA | ID INC PTOCOMA | ID DEC PTOCOMA | INC ID PTOCOMA | DEC ID PTOCOMA;
+
+suma:
+	suma SUMA ID | suma SUMA NUM | ID SUMA ID | NUM SUMA NUM | ID SUMA NUM | NUM SUMA ID;
+
+resta:
+	resta MENOS ID | resta MENOS NUM | ID MENOS ID | NUM MENOS NUM | ID MENOS NUM | NUM MENOS ID;
+
+multi:
+	multi MULTI ID | multi MULTI NUM | ID MULTI ID | NUM MULTI NUM | ID MULTI NUM | NUM MULTI ID;
+
+div:
+	div DIV ID | div DIV NUM | ID DIV ID | NUM DIV NUM | ID DIV NUM | NUM DIV ID;
+
+
 
 \subsection{An\'alisis Sem\'antico}
 

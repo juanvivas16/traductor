@@ -12,6 +12,19 @@ int main()
   b= a;
   a = 3;
   a = b+a;
+  a = b+6;
+
+  a = 9+b;
+  a = b-a;
+
+  a = 9-b;
+  a = b*a;
+  a = b*6;
+  a = 9*b;
+  a = b/a;
+  a = b/6;
+  a = 9/b;
+
 
   a += b;
   a += 2;
@@ -54,10 +67,6 @@ printf("%c hola %f mundo: %d", y, z, a);
 
   while( a < b)
     b--;
-
-
-
-
 
 
 

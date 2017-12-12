@@ -18,6 +18,10 @@
 	vector<vector<tuple<char *, char *>>> tabla_sim;
 	int cantErrores = 0;
 	char *variable;
+	char *varasig;
+	char *varasig2;
+	char *varasigop;
+	char *dolarasig;
 	extern int lineas;
 	extern int yyparse();
 	extern int yylex();
@@ -1284,9 +1288,12 @@ asignacion:
 
 		if(cantErrores == 0)
 		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"=\n");
+			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
 
+			varasig = (char*) "";
+			varasigop = (char*) "";
+			varasig2 = (char*) "";
+			dolarasig = (char *) "";
 		}
 
 		free($1);
@@ -1300,6 +1307,16 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
+
+			varasig = (char*) "";
+			varasigop = (char*) "";
+			varasig2 = (char*) "";
+			dolarasig = (char *) "";
+		}
+
 		free($1);
 	}
 	|
@@ -1311,6 +1328,16 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
+
+			varasig = (char*) "";
+			varasigop = (char*) "";
+			varasig2 = (char*) "";
+			dolarasig = (char *) "";
+		}
+
 		free($1);
 	}
 	|
@@ -1321,6 +1348,15 @@ asignacion:
 			//imprimir_tabla_sim();
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
+		}
+		if(cantErrores == 0)
+		{
+			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
+
+			varasig = (char*) "";
+			varasigop = (char*) "";
+			varasig2 = (char*) "";
+			dolarasig = (char *) "";
 		}
 		free($1);
 	}
@@ -1486,9 +1522,9 @@ suma:
 
 		if(cantErrores == 0)
 		{
-			fprintf(yysalida,"+");
-			fprintf(yysalida,"%s",$3);
-			fprintf(yysalida,"\n");
+			varasigop = (char *)" + ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
 		}
 
 		free($3);
@@ -1513,10 +1549,10 @@ suma:
 
 		if(cantErrores == 0)
 		{
-			fprintf(yysalida,"%s",$1);
-			fprintf(yysalida,"+");
-			fprintf(yysalida,"%s",$3);
-			fprintf(yysalida,"\n");
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" + ";
+			varasig2 = strdup($3);
 		}
 
 		free($1);
@@ -1533,6 +1569,17 @@ suma:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" + ";
+      string s = to_string($3);
+      char const* var1= s.c_str();
+			varasig2 = (char *)var1;
+		}
+
 		free($1);
 	}
 	|
@@ -1544,6 +1591,17 @@ suma:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			string s = to_string($1);
+			char const* var1= s.c_str();
+			varasig = (char *)var1;
+			varasigop = (char *)" + ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
+		}
+
 		free($3);
 	}
 	;
@@ -1557,6 +1615,14 @@ resta:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			varasigop = (char *)" - ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
+		}
+
 		free($3);
 	}
 	|
@@ -1576,6 +1642,15 @@ resta:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" - ";
+			varasig2 = strdup($3);
+		}
+
 		free($1);
 		free($3);
 	}
@@ -1590,6 +1665,16 @@ resta:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" - ";
+      string s = to_string($3);
+      char const* var1= s.c_str();
+			varasig2 = (char *)var1;
+		}
+
 		free($1);
 	}
 	|
@@ -1601,6 +1686,17 @@ resta:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			string s = to_string($1);
+			char const* var1= s.c_str();
+			varasig = (char *)var1;
+			varasigop = (char *)" - ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
+		}
+
 		free($3);
 	}
 	;
@@ -1614,6 +1710,14 @@ multi:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			varasigop = (char *)" \\* ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
+		}
+
 		free($3);
 	}
 	|
@@ -1633,6 +1737,14 @@ multi:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" \\* ";
+			varasig2 = strdup($3);
+		}
+
 		free($1);
 		free($3);
 	}
@@ -1647,6 +1759,16 @@ multi:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" \\* ";
+      string s = to_string($3);
+      char const* var1= s.c_str();
+			varasig2 = (char *)var1;
+		}
+
 		free($1);
 	}
 	|
@@ -1658,6 +1780,16 @@ multi:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			string s = to_string($1);
+			char const* var1= s.c_str();
+			varasig = (char *)var1;
+			varasigop = (char *)" \\* ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
+		}
+
 		free($3);
 	}
 	;
@@ -1671,6 +1803,14 @@ div:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+
+		if(cantErrores == 0)
+		{
+			varasigop = (char *)" / ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
+		}
+
 		free($3);
 	}
 	|
@@ -1690,6 +1830,14 @@ div:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" / ";
+			varasig2 = strdup($3);
+		}
+
 		free($1);
 		free($3);
 	}
@@ -1704,6 +1852,16 @@ div:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			dolarasig = (char *)"$";
+			varasig = strdup($1);
+			varasigop = (char *)" / ";
+      string s = to_string($3);
+      char const* var1= s.c_str();
+			varasig2 = (char *)var1;
+		}
+
 		free($1);
 	}
 	|
@@ -1715,6 +1873,16 @@ div:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		if(cantErrores == 0)
+		{
+			string s = to_string($1);
+			char const* var1= s.c_str();
+			varasig = (char *)var1;
+			varasigop = (char *)" / ";
+			dolarasig = (char *)"$";
+			varasig2 = strdup($3);
+		}
+
 		free($3);
 	}
 	;
