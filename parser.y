@@ -15,7 +15,7 @@
 	typedef tuple<char *, char *> tupla;
 
 	FILE *yysalida;
-	vector<vector<tuple<char *, char *>>> tabla_sim;
+	vector<vector<tupla>> tabla_sim;
 	int cantErrores = 0;
 	char *variable;
 	char *varasig;
@@ -32,10 +32,10 @@
 
 	void agregar_ambito();
 	void eliminar_ambito();
-	bool esta_tabla_sim(char *id);
-	tupla obtener_tupla_por_id(char *id);
+	bool esta_tabla_sim(char *);
+	tupla obtener_tupla_por_id(char *);
 	void imprimir_tabla_sim();
-	bool insertar_tabla_sim(tuple<char *, char *> const & );
+	bool insertar_tabla_sim(tupla const & );
 	void liberar_tabla_sim();
 	void obtener_ambito();
 
@@ -1891,14 +1891,14 @@ div:
 
 void agregar_ambito()
 {
-	vector<tuple<char *, char *> > lista_ambito;
+	vector<tupla > lista_ambito;
 	tabla_sim.emplace_back(lista_ambito);
 }
 
 void eliminar_ambito()
 {
 	vector<vector<tuple<char *,char *> > >::iterator it;
-	vector<tuple<char *, char *> >::iterator it2;
+	vector<tupla >::iterator it2;
 
 	it = tabla_sim.end();
 	it--;
@@ -1915,8 +1915,8 @@ void eliminar_ambito()
 
 bool esta_tabla_sim(char *id)
 {
-	vector<vector<tuple<char *, char *> > >::iterator it;
-	vector<tuple<char *, char *> >::iterator it2;
+	vector<vector<tupla > >::iterator it;
+	vector<tupla >::iterator it2;
 
 	it = tabla_sim.end();
 	it--;
@@ -1936,8 +1936,8 @@ bool esta_tabla_sim(char *id)
 
 tupla obtener_tupla_por_id(char *id)
 {
-	vector<vector<tuple<char *, char *> > >::iterator it;
-	vector<tuple<char *, char *> >::iterator it2;
+	vector<vector<tupla > >::iterator it;
+	vector<tupla >::iterator it2;
 
 	it = tabla_sim.end();
 	it--;
@@ -1953,8 +1953,8 @@ tupla obtener_tupla_por_id(char *id)
 
 void imprimir_tabla_sim()
 {
-	vector<vector<tuple<char *, char *> > >::iterator it;
-	vector<tuple<char *, char *> >::iterator it2;
+	vector<vector<tupla > >::iterator it;
+	vector<tupla >::iterator it2;
 	int i = 0;
 
 	it = tabla_sim.end();
@@ -1976,9 +1976,9 @@ void imprimir_tabla_sim()
 }
 
 
-bool insertar_tabla_sim(tuple<char *, char *> const & tup)
+bool insertar_tabla_sim(tupla const & tup)
 {
-	vector<vector<tuple<char *, char *> > >::iterator it;
+	vector<vector<tupla > >::iterator it;
 
 	if(esta_tabla_sim(get<1>(tup)))
 	{
@@ -2003,8 +2003,8 @@ void liberar_tabla_sim()
 
 void obtener_ambito()
 {
-	vector<vector<tuple<char *, char *> > >::iterator it;
-	vector<tuple<char *, char *> >::iterator it2;
+	vector<vector<tupla > >::iterator it;
+	vector<tupla >::iterator it2;
 
 	it = tabla_sim.end();
 	it--;

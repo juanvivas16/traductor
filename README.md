@@ -1,2 +1,2 @@
 # traductor
-Traductor de C a Shell Script
+Traductor simple de C a Bash.
