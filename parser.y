@@ -246,7 +246,7 @@ cuerpo:
 		free($1);
 	}	
 	|
-	RESERVADA LLAVEABR LLAVEABR cuerpo LLAVECERR estructura finestructura 
+	RESERVADA LLAVEABR cuerpo LLAVECERR estructura finestructura 
 	{
 		if(strcmp($1, "do"))
 		{
@@ -294,15 +294,22 @@ cuerpo:
 finestructura:
 	LLAVECERR
 	{
-		fprintf(yysalida, "\nfi\n");
+		if(!strcmp(estrutura_op, "while"))
+		{
+			fprintf(yysalida, "done\n\n");
+		}
+		else if(!strcmp(estrutura_op, "if"))
+		{
+			fprintf(yysalida, "fi\n\n");
+		}	
+		
 	}
 	|
 	PTOCOMA
 	{
-		fprintf(yysalida, "\ndone\n");
+		fprintf(yysalida, "done\n\n");
 	}
 	;
-
 
 
 estructura:
