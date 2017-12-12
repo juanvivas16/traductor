@@ -4,7 +4,9 @@ BISON = bison -d
 
 FLEX = flex
 
-all: clean bison flex parser source1 source2 source3 flexdebug scanner
+LATEX = pdflatex -synctex=1 -interaction=nonstopmode
+
+all: clean informe bison flex parser source1 source2 source3 flexdebug scanner
 
 clean:
 	rm -f lex.yy.c parser parser.tab.c parser.tab.h scanner *.out salida.sh
@@ -14,7 +16,7 @@ bison:
 
 flex:
 	$(FLEX) scanner.l
-
+s
 flexdebug:
 	$(FLEX) scannerdebug.l
 
