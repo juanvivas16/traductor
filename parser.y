@@ -346,6 +346,7 @@ estructura:
 		else if(!strcmp($1, "while") && cantErrores == 0)
 		{
 			fprintf(yysalida, $1);
+			fprintf(yysalida, " ");
 			fprintf(yysalida, condi_1);
 			fprintf(yysalida, condi_2);
 			fprintf(yysalida, condi_3);
@@ -362,6 +363,7 @@ estructura:
 		else if(!strcmp($1, "if") && cantErrores == 0)
 		{
 			fprintf(yysalida, $1);
+			fprintf(yysalida, " ");
 			fprintf(yysalida, condi_1);
 			fprintf(yysalida, condi_2);
 			fprintf(yysalida, condi_3);
