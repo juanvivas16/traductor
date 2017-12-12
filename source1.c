@@ -4,24 +4,25 @@
 int main()
 {
 	// Declaracion de las variables
-	int n;
+	int N;
+	// Operaciones
+	scanf ("%d",&N);
+
 	int i = 1;
 	int j;
 
-	// Operaciones
-	scanf ("%d",&n);
+	while(i <= N)
+	{
+		j = 1;
 
-		do{
-			j = 1;
-			do{
-				printf("%d", i);
- 				j++;
-			}
-			while(j <= i);
-			i++;
-			printf("\n");
+		while(j <= i)
+		{
+			printf("%f", i);
+ 			j++;
 		}
-		while(i <= n);
+			printf(" ");
+			i++;
+		}
 
 	return 0;
 }

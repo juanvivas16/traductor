@@ -11,7 +11,8 @@ int main()
   int contador = 0;
   int mod;
 
-  do {
+  while(j <= X)
+  {
     mod = X % i;
 
     if (mod == 0)
@@ -19,8 +20,7 @@ int main()
 
     i += 1;
     j = i * i;
-
-  } while(j <= X);
+  }
 
   if (contador == 0)
   {

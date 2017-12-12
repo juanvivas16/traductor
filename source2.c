@@ -9,23 +9,24 @@ int main()
   int N;
 
   scanf("%d", &N);
-  printf("La serie con %d terminos es: \n", N);
+  printf("La serie con %d terminos es:", N);
   printf("%d, %d, %d", a, b, c);
 
   int i = 4;
   int termino;
 
-  do {
-    termino = a + b + c;
+  while(i <= N)
+  {
+    termino = a + b;
+    termino += c;
     printf(", %d", termino);
     a = b;
     b = c;
     c = termino;
     i += 1;
+  }
 
-  } while(i <= N);
-
-  printf("\n");
+  printf(" ");
   return 0;
 
 }

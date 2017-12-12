@@ -4,7 +4,7 @@
 	#include <list>
 	#include <cctype>
 	#include <cstring>
-  	#include <string>
+  #include <string>
 	#include <cstdlib>
 	#include <typeinfo>
 	#include <tuple>
@@ -234,19 +234,18 @@ cuerpo:
 	|
 	estructura
 	|
-	RESERVADA LLAVEABR cuerpo LLAVECERR estructura finestructura cuerpo
-	{
-		if(strcmp($1, "do"))
+	RESERVADA LLAVEABR cuerpo LLAVECERR estructura LLAVECERR
 		{
-			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
-			cantErrores++;
-		}
+			if(!strcmp(estrutura_op, "while"))
+			{
+				fprintf(yysalida, "done\n\n");
+			}
+			else if(!strcmp(estrutura_op, "if"))
+			{
+				fprintf(yysalida, "fi\n\n");
+			}
 
-		estrutura_op = (char *)strdup($1);
-		free($1);
-	}	
-	|
-	RESERVADA LLAVEABR cuerpo LLAVECERR estructura finestructura 
+		} cuerpo
 	{
 		if(strcmp($1, "do"))
 		{
@@ -258,9 +257,54 @@ cuerpo:
 		free($1);
 	}
 	|
-	estructura LLAVEABR cuerpo finestructura cuerpo
+	RESERVADA LLAVEABR cuerpo LLAVECERR estructura LLAVECERR
+		{
+			if(!strcmp(estrutura_op, "while"))
+			{
+				fprintf(yysalida, "done\n\n");
+			}
+			else if(!strcmp(estrutura_op, "if"))
+			{
+				fprintf(yysalida, "fi\n\n");
+			}
+
+		}
+	{
+		if(strcmp($1, "do"))
+		{
+			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		estrutura_op = (char *)strdup($1);
+		free($1);
+	}
 	|
-	estructura LLAVEABR cuerpo finestructura
+	estructura LLAVEABR cuerpo LLAVECERR
+		{
+			if(!strcmp(estrutura_op, "while"))
+			{
+				fprintf(yysalida, "done\n\n");
+			}
+			else if(!strcmp(estrutura_op, "if"))
+			{
+				fprintf(yysalida, "fi\n\n");
+			}
+
+		} cuerpo
+	|
+	estructura LLAVEABR cuerpo LLAVECERR
+		{
+			if(!strcmp(estrutura_op, "while"))
+			{
+				fprintf(yysalida, "done\n\n");
+			}
+			else if(!strcmp(estrutura_op, "if"))
+			{
+				fprintf(yysalida, "fi\n\n");
+			}
+
+		}
 	|
 	RESERVADA LLAVEABR cuerpo LLAVECERR cuerpo
 	{
@@ -291,27 +335,6 @@ cuerpo:
 	RESERVADA cuerpo
 	;
 
-finestructura:
-	LLAVECERR
-	{
-		if(!strcmp(estrutura_op, "while"))
-		{
-			fprintf(yysalida, "done\n\n");
-		}
-		else if(!strcmp(estrutura_op, "if"))
-		{
-			fprintf(yysalida, "fi\n\n");
-		}	
-		
-	}
-	|
-	PTOCOMA
-	{
-		fprintf(yysalida, "done\n\n");
-	}
-	;
-
-
 estructura:
 	RESERVADA PARENTESISABR condicional PARENTESISCERR
 	{
@@ -323,13 +346,13 @@ estructura:
 		else if(!strcmp($1, "while") && cantErrores == 0)
 		{
 			fprintf(yysalida, $1);
-			fprintf(yysalida, "\ndo\n");
+			fprintf(yysalida, " ");
 			fprintf(yysalida, condi_1);
 			fprintf(yysalida, condi_2);
 			fprintf(yysalida, condi_3);
 			fprintf(yysalida, condi_4);
 			fprintf(yysalida, condi_5);
-			fprintf(yysalida, "\n");
+			fprintf(yysalida, "\ndo\n");
 			condi_1 = "";
 			condi_2 = "";
 			condi_3 = "";
@@ -340,6 +363,7 @@ estructura:
 		else if(!strcmp($1, "if") && cantErrores == 0)
 		{
 			fprintf(yysalida, $1);
+			fprintf(yysalida, " ");
 			fprintf(yysalida, condi_1);
 			fprintf(yysalida, condi_2);
 			fprintf(yysalida, condi_3);
@@ -352,7 +376,7 @@ estructura:
 			condi_3 = "";
 			condi_4 = "";
 			condi_5 = "";
-			estrutura_op = (char *)strdup($1);			
+			estrutura_op = (char *)strdup($1);
 		}
 
 
@@ -679,7 +703,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -eq ";
+			condi_3 = " -eq $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -698,11 +722,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = "-eq ";
+			condi_3 = " -eq $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -750,7 +774,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -gt ";
+			condi_3 = " -gt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -777,7 +801,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -ge ";
+			condi_3 = " -ge $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -804,7 +828,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -lt ";
+			condi_3 = " -lt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -832,7 +856,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -le ";
+			condi_3 = " -le $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -851,11 +875,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -gt ";
+			condi_3 = " -gt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -873,11 +897,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -ge ";
+			condi_3 = " -ge $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -895,11 +919,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -lt ";
+			condi_3 = " -lt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -917,11 +941,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -le ";
+			condi_3 = " -le $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
