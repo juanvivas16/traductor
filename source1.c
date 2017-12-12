@@ -17,7 +17,7 @@ int main()
 
 		while(j <= i)
 		{
-			printf("%f", i);
+			printf("%d", i);
  			j++;
 		}
 			printf(" ");

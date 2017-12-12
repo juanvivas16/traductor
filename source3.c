@@ -16,8 +16,9 @@ int main()
     mod = X % i;
 
     if (mod == 0)
+    {
       contador += 1;
-
+    }
     i += 1;
     j = i * i;
   }
@@ -25,12 +26,18 @@ int main()
   if (contador == 0)
   {
     if ( X == 1)
-      printf("%d No es primo1\n", X);
+    {
+      printf("%d No es primo1", X);
+    }
     else
-      printf("%d Es primo\n", X);
+    {
+      printf("%d Es primo", X);
+    }
   }
   else
-    printf("%d No es primo\n", X);
+  {
+    printf("%d No es primo", X);
+  }
 
   return 0;
 }

@@ -18,7 +18,6 @@
 	bool esta_reservada_tipo(char *rt);
 	void imprimir_reservada_tipo();
 
-
 	void cargar_reservada();
 	bool esta_reservada(char *r);
 	int posicion_reservada(char *r);
@@ -37,6 +36,7 @@ DIGITO [0-9]
 %%
 
 {LETRA}({LETRA}|{DIGITO})*	{
+	
 
 										yylval.strval=strdup(yytext);
 

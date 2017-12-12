@@ -7,7 +7,7 @@ do
 	j=1
  	while [ $j -le $i ]
  	do
- 		echo -n $i
+ 		echo $i
  		j=`expr $j + 1`
  	done
  	echo

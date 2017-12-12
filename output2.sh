@@ -6,13 +6,13 @@ c=1
 
 read N
 echo La serie con $N terminos es:
-echo -n $a, $b, $c
+echo $a, $b, $c
 i=4
 while [ $i -le $N ]
 do
   termino=`expr $a + $b`
   termino=`expr $termino + $c`
-  echo -n , $termino
+  echo , $termino
   a=$b
   b=$c
   c=$termino
