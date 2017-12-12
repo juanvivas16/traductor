@@ -701,7 +701,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -eq ";
+			condi_3 = " -eq $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -720,11 +720,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = "-eq ";
+			condi_3 = " -eq $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -772,7 +772,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -gt ";
+			condi_3 = " -gt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -799,7 +799,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -ge ";
+			condi_3 = " -ge $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -826,7 +826,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -lt ";
+			condi_3 = " -lt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -854,7 +854,7 @@ condicional:
 		if(cantErrores == 0){
 			condi_1 = "[ $";
 			condi_2 = (char *)strdup($1);
-			condi_3 = " -le ";
+			condi_3 = " -le $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -873,11 +873,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -gt ";
+			condi_3 = " -gt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -895,11 +895,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -ge ";
+			condi_3 = " -ge $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -917,11 +917,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -lt ";
+			condi_3 = " -lt $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
@@ -939,11 +939,11 @@ condicional:
 		}
 
 		if(cantErrores == 0){
-			condi_1 = "[ $";
+			condi_1 = "[ ";
 			string s = to_string($1);
       		char const* var= s.c_str();
 			condi_2 = (char *)var;
-			condi_3 = " -le ";
+			condi_3 = " -le $";
 			condi_4 = (char *)strdup($3);
 			condi_5 = " ]";
 		}
