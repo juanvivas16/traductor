@@ -1,4 +1,4 @@
-CXX = g++ -std=c++11
+CXX = g++ -std=c++11 -Wno-write-strings
 
 BISON = bison -d
 
