@@ -36,7 +36,7 @@ DIGITO [0-9]
 %%
 
 {LETRA}({LETRA}|{DIGITO})*	{
-	
+
 
 										yylval.strval=strdup(yytext);
 
@@ -125,8 +125,18 @@ DIGITO [0-9]
 
 				<secomillas>[A-Za-z0-9.-_, ]+ {yylval.strval=strdup(yytext); return TEXTO;}
 				<secomillas>"%"[dfc] {yylval.strval=strdup(yytext); return PRCVAL;}
+				<secomillas>.		{
+												cout<<"Palabra no reconocida por ninguna expresion."<<endl;
+												cout<<"Linea del error lexico: "<<lineas<<endl;
+												exit(0);
+											}
 
-.			{cout<<"Palabra no reconocida por ninguna expresion."<<endl;}
+.			{
+				cout<<"Palabra no reconocida por ninguna expresion."<<endl;
+				cout<<"Linea del error lexico: "<<lineas<<endl;
+				exit(0);
+
+			}
 
 %%
 

@@ -49,8 +49,8 @@ DIGITO [0-9]
 				}
 
 
-(-)?{DIGITO}+     { cout<<"constante3"<<endl; }
-(-)?{DIGITO}*"."{DIGITO}+ { cout<<"constante6"<<endl; }
+(-)?{DIGITO}+     { cout<<"constanteint"<<endl; }
+(-)?{DIGITO}*"."{DIGITO}+ { cout<<"constantefloat"<<endl; }
 
 "."       	{cout<<"punto"<<endl;}
 ";"					{cout<<"ptcoma"<<endl;}
@@ -73,8 +73,16 @@ DIGITO [0-9]
 "<="				{cout<<"MENOR_I"<<endl;;}
 ">="				{cout<<"MAYOR_I"<<endl;}
 "!="				{cout<<"DIST"<<endl;}
+"+="        {cout<<"SUM_ASSIGN"<<endl;}
+"-="        {cout<<"SUB_ASSIGN"<<endl;}
+"*="        {cout<<"MUL_ASSIGN"<<endl;}
+"/="        {cout<<"DIV_ASSIGN"<<endl;}
+"%="        {cout<<"MOD_ASSIGN"<<endl;}
+"=="				{cout<<"IGUALD"<<endl;}
 "||"				{cout<<"OR"<<endl;;}
 "&&"				{cout<<"AND"<<endl;}
+"++"				{cout<<"INC"<<endl;}
+"--"				{cout<<"DEC"<<endl;}
 "\%"				{cout<<"porcentaje"<<endl;}
 ","					{cout<<"coma"<<endl;}
 "\'"				{cout<<"COMISIMPLE"<<endl;}
@@ -114,9 +122,18 @@ DIGITO [0-9]
 													}}
 				<secomillas>"\%"[dfc] {cout<<"PRCVAL"<<endl;}
 				<secomillas>[A-Za-z0-9.-_, ]+ {cout<<"TEXTO"<<endl;}
+				<secomillas>.		{
+												cout<<"Palabra no reconocida por ninguna expresion."<<endl;
+												cout<<"Linea del error lexico dentro del printf: "<<lineas<<endl;
+												exit(0);
+											}
 
+.			{
+				cout<<"Palabra no reconocida por ninguna expresion."<<endl;
+				cout<<"Linea del error lexico: "<<lineas<<endl;
+				exit(0);
 
-.			{cout<<"Error Lexico en la linea:"<<lineas<<endl;}
+			}
 
 %%
 

@@ -4,17 +4,8 @@ int main()
 int a = 0;
 int x = 3;
 
-  if( a >= 3)
-  {
-    int c =4;
-  }
+  printf("hola?!!^^$$~``?? %d", a);
 
-  while (a >= 4)
-  {
-    float yy = 543;
-  }
-
-  printf("%d", a);
-
+  char xx = '$';
   return 0;
 }
