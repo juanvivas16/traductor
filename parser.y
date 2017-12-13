@@ -4,7 +4,7 @@
 	#include <list>
 	#include <cctype>
 	#include <cstring>
-  #include <string>
+    #include <string>
 	#include <cstdlib>
 	#include <typeinfo>
 	#include <tuple>
@@ -182,28 +182,6 @@ cuerpo:
 			else if(!strcmp(estrutura_op, "if"))
 				fprintf(yysalida, "fi\n\n");
 		}
-	|
-	RESERVADA LLAVEABR cuerpo LLAVECERR cuerpo
-	{
-		if(strcmp($1, "else"))
-		{
-			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
-			cantErrores++;
-		}
-		else if(cantErrores == 0)
-			fprintf(yysalida, "else");
-	}
-	|
-	RESERVADA LLAVEABR cuerpo LLAVECERR
-	{
-		if(strcmp($1, "else"))
-		{
-			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
-			cantErrores++;
-		}
-		else if(cantErrores == 0)
-			fprintf(yysalida, "else");
-	}
 	|
 	RESERVADA cuerpo;
 
@@ -831,7 +809,52 @@ condicional:
 			condi_4 = (char *)var;
 			condi_5 = " ]";
 		}
-	};
+	}
+	|
+	ID DIST NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		if(cantErrores == 0)
+		{
+			condi_1 = "[ $";
+			condi_2 = (char *)strdup($1);
+			condi_3 = " -ne ";
+			string s = to_string($3);
+      char const* var = s.c_str();
+			condi_4 = (char *)var;
+			condi_5 = " ]";
+		}
+	}
+	|
+	ID DIST ID
+	{
+		if(!esta_tabla_sim($1))
+		{
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+		if(!esta_tabla_sim($3))
+		{
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		if(cantErrores == 0)
+		{
+			condi_1 = "[ $";
+			condi_2 = (char *)strdup($1);
+			condi_3 = " -ne $";
+			condi_4 = (char *)strdup($3);
+			condi_5 = " ]";
+		}
+	}
+	;
+
 
 retornar:
 	RESERVADA NUM PTOCOMA
