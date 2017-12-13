@@ -228,6 +228,7 @@ int posicion_reservada(char *r)
 
 			pos++;
 	}
+	return 0;
 }
 
 void imprimir_reservada()

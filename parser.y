@@ -217,14 +217,15 @@ estructura:
 		}
 		else if(!strcmp($1, "while") && cantErrores == 0)
 		{
-			fprintf(yysalida, $1);
-			fprintf(yysalida, " ");
-			fprintf(yysalida, condi_1);
-			fprintf(yysalida, condi_2);
-			fprintf(yysalida, condi_3);
-			fprintf(yysalida, condi_4);
-			fprintf(yysalida, condi_5);
-			fprintf(yysalida, "\ndo\n");
+			fprintf(yysalida,"%s %s%s%s%s%s\ndo\n",$1, condi_1, condi_2, condi_3,condi_4,condi_5);
+			//fprintf(yysalida,"%s", $1);
+			//fprintf(yysalida, " ");
+			//fprintf(yysalida, condi_1);
+			//fprintf(yysalida, condi_2);
+			//fprintf(yysalida, condi_3);
+			//fprintf(yysalida, condi_4);
+			//fprintf(yysalida, condi_5);
+			//fprintf(yysalida, "\ndo\n");
 			condi_1 = "";
 			condi_2 = "";
 			condi_3 = "";
@@ -234,15 +235,16 @@ estructura:
 		}
 		else if(!strcmp($1, "if") && cantErrores == 0)
 		{
-			fprintf(yysalida, $1);
-			fprintf(yysalida, " ");
-			fprintf(yysalida, condi_1);
-			fprintf(yysalida, condi_2);
-			fprintf(yysalida, condi_3);
-			fprintf(yysalida, condi_4);
-			fprintf(yysalida, condi_5);
-			fprintf(yysalida, "\nthen\n");
-			fprintf(yysalida, "\n");
+			fprintf(yysalida,"%s %s%s%s%s%s\nthen\n",$1, condi_1, condi_2, condi_3,condi_4,condi_5);
+			//fprintf(yysalida, $1);
+			//fprintf(yysalida, " ");
+			//fprintf(yysalida, condi_1);
+			//fprintf(yysalida, condi_2);
+			//fprintf(yysalida, condi_3);
+			//fprintf(yysalida, condi_4);
+			//fprintf(yysalida, condi_5);
+			//fprintf(yysalida, "\nthen\n");
+			//fprintf(yysalida, "\n");
 			condi_1 = "";
 			condi_2 = "";
 			condi_3 = "";
@@ -1801,6 +1803,9 @@ tupla obtener_tupla_por_id(char *id)
 	for(it2; it2!=(*it).end(); it2++)
 		if(!strcmp(get<1>(*it2),id))
 			return *it2;
+
+	tupla t;
+	return t;
 }
 
 void imprimir_tabla_sim()
