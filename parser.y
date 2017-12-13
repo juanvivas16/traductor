@@ -17,17 +17,6 @@
 	FILE *yysalida;
 	vector<vector<tupla>> tabla_sim;
 	int cantErrores = 0;
-	char *variable;
-	char *varasig;
-	char *varasig2;
-	char *varasigop;
-	char *dolarasig;
-	char *estrutura_op;
-	char *condi_1;
-	char *condi_2;
-	char *condi_3;
-	char *condi_4;
-	char *condi_5;
 	extern int lineas;
 	extern int yyparse();
 	extern int yylex();
@@ -64,6 +53,9 @@
 	int	ival;
 }
 
+%type<strval> suma resta multi div asignacion declaracion condicional retornar
+%type<strval> print scan estructura principal cuerpo cabecera codigo programa
+
 %token<strval> TIPO ID RESERVADA PRCVAL TEXTO
 %token<ival>	NUM
 
@@ -89,11 +81,30 @@ programa:
 		if(cantErrores > 0)
 			cout<<endl<<endl<<"***ERROR: tipo - Semantico***"<<endl;
 		else
+		{
+			FILE *yysalida;
+			yysalida = fopen("salida.sh", "w");
+			fputs("#!/bin/bash\n", yysalida);
+			fputs($1, yysalida);
+			fclose(yysalida);
+			free($1);
 			cout<<endl<<endl<<"Exito!"<<endl;
+		}
 	};
 
 codigo:
-	cabecera {fprintf(yysalida, "#!/bin/bash\n");} principal | principal;
+	cabecera principal
+	{
+		$$ = (char *)malloc(strlen($2)+1);
+		strcpy($$,$2);
+		free($2);
+	}
+	| principal
+	{
+		$$ = (char *)malloc(strlen($1)+1);
+		strcpy($$,$1);
+		free($1);
+};
 
 cabecera:
 	cabecera NUMERAL RESERVADA MENOR ID MAYOR
@@ -103,6 +114,8 @@ cabecera:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	NUMERAL RESERVADA MENOR ID MAYOR
@@ -112,6 +125,8 @@ cabecera:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	cabecera NUMERAL RESERVADA COMILLAS TEXTO COMILLAS
@@ -121,6 +136,8 @@ cabecera:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	NUMERAL RESERVADA COMILLAS TEXTO COMILLAS
@@ -130,6 +147,8 @@ cabecera:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	cabecera NUMERAL RESERVADA MENOR ID PUNTO ID MAYOR
@@ -139,6 +158,8 @@ cabecera:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	NUMERAL RESERVADA MENOR ID PUNTO ID MAYOR
@@ -148,6 +169,8 @@ cabecera:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	};
 
 principal:
@@ -158,54 +181,214 @@ principal:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<". Quizo decir 'main'"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen($6)+1);
+		strcpy($$,$6);
+		free($6);
 	};
 
 cuerpo:
-	asignacion cuerpo | asignacion | declaracion cuerpo | declaracion | retornar cuerpo | retornar
-	| scan cuerpo | scan | print cuerpo | print | estructura cuerpo | estructura
-	|
-	estructura LLAVEABR cuerpo LLAVECERR
-		{
-			if(!strcmp(estrutura_op, "while"))
-				fprintf(yysalida, "done\n\n");
-
-			else if(!strcmp(estrutura_op, "if"))
-				fprintf(yysalida, "fi\n\n");
-
-		} cuerpo
-	|
-	estructura LLAVEABR cuerpo LLAVECERR
-		{
-			if(!strcmp(estrutura_op, "while"))
-				fprintf(yysalida, "done\n\n");
-
-			else if(!strcmp(estrutura_op, "if"))
-				fprintf(yysalida, "fi\n\n");
-		}
-	|
-	RESERVADA LLAVEABR cuerpo LLAVECERR cuerpo
+	asignacion cuerpo
 	{
-		if(strcmp($1, "else"))
-		{
-			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
-			cantErrores++;
-		}
-		else if(cantErrores == 0)
-			fprintf(yysalida, "else");
+		$$ = (char *)malloc(strlen($1)+strlen($2) + 1);
+		strcpy($$,$1);
+		strcat($$,$2);
+		free($1);
+		free($2);
+
 	}
-	|
-	RESERVADA LLAVEABR cuerpo LLAVECERR
+	|	asignacion
 	{
-		if(strcmp($1, "else"))
-		{
-			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
-			cantErrores++;
-		}
-		else if(cantErrores == 0)
-			fprintf(yysalida, "else");
+		$$ = (char *)malloc(strlen($1) + 1);
+		strcpy($$,$1);
+		free($1);
 	}
-	|
-	RESERVADA cuerpo;
+	| declaracion cuerpo
+	{
+		$$ = (char *)malloc(strlen($1)+strlen($2) + 1);
+		strcpy($$,$1);
+		strcat($$,$2);
+		free($1);
+		free($2);
+	}
+	| declaracion
+	{
+		$$ = (char *)malloc(strlen($1) + 1);
+		strcpy($$,$1);
+		free($1);
+	}
+	| retornar cuerpo
+	{
+		$$ = (char *)malloc(strlen($1)+strlen($2) + 1);
+		strcpy($$,$1);
+		strcat($$,$2);
+		free($1);
+		free($2);
+	}
+	| retornar
+	{
+		$$ = (char *)malloc(strlen($1) + 1);
+		strcpy($$,$1);
+		free($1);
+	}
+	| scan cuerpo
+	{
+		$$ = (char *)malloc(strlen($1)+strlen($2) + 1);
+		strcpy($$,$1);
+		strcat($$,$2);
+		free($1);
+		free($2);
+	}
+	| scan
+	{
+		$$ = (char *)malloc(strlen($1) + 1);
+		strcpy($$,$1);
+		free($1);
+	}
+	| print cuerpo
+	{
+		$$ = (char *)malloc(strlen($1)+strlen($2) + 1);
+		strcpy($$,$1);
+		strcat($$,$2);
+		free($1);
+		free($2);
+	}
+	| print
+	{
+		$$ = (char *)malloc(strlen($1) + 1);
+		strcpy($$,$1);
+		free($1);
+	}
+	| estructura cuerpo
+	{
+		char * copy = strdup($1);
+		char * pch = strtok (copy," ");
+
+		if (pch != NULL)
+		{
+			if(!strcmp(pch, "while"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen($2)+strlen("\ndone\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,$2);
+				strcat($$,"\ndone\n");
+				free($1);
+				free($2);
+			}
+
+			if(!strcmp(pch, "if"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen($2)+strlen("\nfi\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,$2);
+				strcat($$,"\nfi\n");
+				free($1);
+				free($2);
+			}
+		}
+		else
+		{
+			$$ = (char *)malloc(strlen(" ")+1);
+			strcpy($$," ");
+		}
+	}
+	| estructura
+	{
+		char * copy = strdup($1);
+		char * pch = strtok (copy," ");
+		if (pch != NULL)
+		{
+			if(!strcmp(pch, "while"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen("\ndone\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,"\ndone\n");
+				free($1);
+			}
+
+			if(!strcmp(pch, "if"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen("\nfi\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,"\nfi\n");
+				free($1);
+			}
+		}
+		else
+		{
+			$$ = (char *)malloc(strlen(" ")+1);
+			strcpy($$," ");
+		}
+	}
+	| estructura LLAVEABR cuerpo LLAVECERR cuerpo
+	{
+		char * copy = strdup($1);
+		char * pch = strtok (copy," ");
+
+		if (pch != NULL)
+		{
+			if(!strcmp(pch, "while"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen($3)+strlen($5)+strlen("\ndone\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,$3);
+				strcat($$,"\ndone\n");
+				strcat($$,$5);
+				free($1);
+				free($3);
+				free($5);
+			}
+
+			if(!strcmp(pch, "if"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen($3)+strlen($5)+strlen("\nfi\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,$3);
+				strcat($$,"\nfi\n");
+				strcat($$,$5);
+				free($1);
+				free($3);
+				free($5);
+			}
+		}
+		else
+		{
+			$$ = (char *)malloc(strlen(" ")+1);
+			strcpy($$," ");
+		}
+	}
+	| estructura LLAVEABR cuerpo LLAVECERR
+	{
+		char * copy = strdup($1);
+		char * pch = strtok (copy," ");
+
+		if (pch != NULL)
+		{
+			if(!strcmp(pch, "while"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen($3)+strlen("\ndone\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,$3);
+				strcat($$,"\ndone\n");
+				free($1);
+				free($3);
+			}
+
+			if(!strcmp(pch, "if"))
+			{
+				$$ = (char *)malloc(strlen($1)+strlen($3)+strlen("\nfi\n")+ 1);
+				strcpy($$,$1);
+				strcat($$,$3);
+				strcat($$,"\nfi\n");
+				free($1);
+				free($3);
+			}
+		}
+		else
+		{
+			$$ = (char *)malloc(strlen(" ")+1);
+			strcpy($$," ");
+		}
+	}
 
 estructura:
 	RESERVADA PARENTESISABR condicional PARENTESISCERR
@@ -215,44 +398,32 @@ estructura:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-		else if(!strcmp($1, "while") && cantErrores == 0)
+
+		if(!strcmp($1, "while"))
 		{
-			fprintf(yysalida,"%s %s%s%s%s%s\ndo\n",$1, condi_1, condi_2, condi_3,condi_4,condi_5);
-			//fprintf(yysalida,"%s", $1);
-			//fprintf(yysalida, " ");
-			//fprintf(yysalida, condi_1);
-			//fprintf(yysalida, condi_2);
-			//fprintf(yysalida, condi_3);
-			//fprintf(yysalida, condi_4);
-			//fprintf(yysalida, condi_5);
-			//fprintf(yysalida, "\ndo\n");
-			condi_1 = "";
-			condi_2 = "";
-			condi_3 = "";
-			condi_4 = "";
-			condi_5 = "";
-			estrutura_op = (char *)strdup($1);
+			$$ = (char *)malloc(strlen("while ")+strlen($3)+strlen("\ndo\n")+ 1);
+			strcpy($$,"while ");
+			strcat($$,$3);
+			strcat($$,"\ndo\n");
+			free($3);
 		}
-		else if(!strcmp($1, "if") && cantErrores == 0)
-		{
-			fprintf(yysalida,"%s %s%s%s%s%s\nthen\n",$1, condi_1, condi_2, condi_3,condi_4,condi_5);
-			//fprintf(yysalida, $1);
-			//fprintf(yysalida, " ");
-			//fprintf(yysalida, condi_1);
-			//fprintf(yysalida, condi_2);
-			//fprintf(yysalida, condi_3);
-			//fprintf(yysalida, condi_4);
-			//fprintf(yysalida, condi_5);
-			//fprintf(yysalida, "\nthen\n");
-			//fprintf(yysalida, "\n");
-			condi_1 = "";
-			condi_2 = "";
-			condi_3 = "";
-			condi_4 = "";
-			condi_5 = "";
-			estrutura_op = (char *)strdup($1);
-		}
-		free($1);
+
+		else
+			{
+			if(!strcmp($1, "if"))
+			{
+				$$ = (char *)malloc(strlen("if ")+strlen($3)+strlen("\nthen\n")+ 1);
+				strcpy($$,"if ");
+				strcat($$,$3);
+				strcat($$,"\nthen\n");
+				free($3);
+			}
+			else
+			{
+				$$ = (char *)malloc(strlen(" ")+1);
+				strcpy($$," ");
+			}
+	}
 	};
 
 scan:
@@ -285,8 +456,11 @@ scan:
 			}
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"read %s\n", $8);
+		$$ = (char *)malloc(strlen("read ")+strlen($8)+strlen("\n")+ 1);
+		strcpy($$,"read ");
+		strcat($$,$8);
+		strcat($$,"\n");
+		free($8);
 	};
 
 print:
@@ -297,9 +471,11 @@ print:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-			fprintf(yysalida, "echo %s\n", $4);
+		$$ = (char *)malloc(strlen("echo ")+strlen($4)+strlen("\n")+ 1);
+		strcpy($$,"echo ");
+		strcat($$,$4);
+		strcat($$,"\n");
+		free($4);
 
 	}
 	|
@@ -332,8 +508,16 @@ print:
 			}
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida, "echo %s $%s %s\n",$4,$9,$6);
+		$$ = (char *)malloc(strlen("echo ")+strlen($4)+strlen("$")+strlen($9)+strlen($6)+strlen("\n")+ 1);
+		strcpy($$,"echo ");
+		strcat($$,$4);
+		strcat($$,"$");
+		strcat($$,$9);
+		strcat($$,$6);
+		strcat($$,"\n");
+		free($4);
+		free($5);
+		free($9);
 	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO COMILLAS COMA ID PARENTESISCERR PTOCOMA
@@ -365,8 +549,13 @@ print:
 			}
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida, "echo $%s %s\n",$8,$5);
+		$$ = (char *)malloc(strlen("echo $")+strlen($8)+strlen($5)+strlen("\n")+ 1);
+		strcpy($$,"echo $");
+		strcat($$,$8);
+		strcat($$,$5);
+		strcat($$,"\n");
+		free($5);
+		free($8);
 	}
 	|
 	RESERVADA PARENTESISABR COMILLAS TEXTO PRCVAL COMILLAS COMA ID PARENTESISCERR PTOCOMA
@@ -398,8 +587,14 @@ print:
 			}
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida, "echo %s $%s\n",$4,$8);
+		$$ = (char *)malloc(strlen("echo ")+strlen($4)+strlen(" $")+strlen($8)+strlen("\n")+ 1);
+		strcpy($$,"echo ");
+		strcat($$,$4);
+		strcat($$, " $");
+		strcat($$,$8);
+		strcat($$,"\n");
+		free($4);
+		free($8);
 	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL COMILLAS COMA ID PARENTESISCERR PTOCOMA
@@ -429,8 +624,11 @@ print:
 			}
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida, "echo $%s\n",$7);
+		$$ = (char *)malloc(strlen("echo $")+strlen($7)+strlen("\n")+ 1);
+		strcpy($$,"echo $");
+		strcat($$,$7);
+		strcat($$,"\n");
+		free($7);
 	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO PRCVAL COMILLAS COMA ID COMA ID PARENTESISCERR PTOCOMA
@@ -480,8 +678,16 @@ print:
 			}
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida, "echo $%s %s $%s\n",$9,$5,$11);
+		$$ = (char *)malloc(strlen("echo $")+strlen($9)+strlen($5)+strlen("$")+strlen($11)+strlen("\n")+ 1);
+		strcpy($$,"echo $");
+		strcat($$,$9);
+		strcat($$,$5);
+		strcat($$,"$");
+		strcat($$,$11);
+		strcat($$,"\n");
+		free($5);
+		free($9);
+		free($11);
 	}
 	|
 	RESERVADA PARENTESISABR COMILLAS PRCVAL TEXTO PRCVAL TEXTO PRCVAL COMILLAS COMA ID COMA ID COMA ID PARENTESISCERR PTOCOMA
@@ -510,9 +716,21 @@ print:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida, "echo $%s %s $%s %s $%s\n",$11,$5,$13,$7,$15);
-
+		$$ = (char *)malloc(strlen("echo $")+strlen($11)+strlen($5)+strlen("$")+strlen($13)+strlen($7)+strlen("$")+strlen($15)+strlen("\n")+ 1);
+		strcpy($$,"echo $");
+		strcat($$,$11);
+		strcat($$,$5);
+		strcat($$,"$");
+		strcat($$,$13);
+		strcat($$,$7);
+		strcat($$,"$");
+		strcat($$,$15);
+		strcat($$,"\n");
+		free($5);
+		free($7);
+		free($11);
+		free($13);
+		free($15);
 	};
 
 condicional:
@@ -530,14 +748,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -eq $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+strlen($1)+strlen(" -eq $")+strlen($3)+strlen(" ]") + 1);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -eq $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($1);
+		free($3);
 	}
 	|
 	NUM IGUALD ID
@@ -548,16 +766,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ ";
-			string s = to_string($1);
-      char const* var = s.c_str();
-			condi_2 = (char *)var;
-			condi_3 = " -eq $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ ")+sizeof($1)+strlen(" -eq $")+strlen($3)+strlen(" ]") + 1);
+		string num = to_string($1);
+		strcpy($$,"[ ");
+		strcat($$,num.c_str());
+		strcat($$," -eq $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($3);
 	}
 	|
 	ID IGUALD NUM
@@ -568,16 +784,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -eq ";
-			string s = to_string($3);
-      char const* var = s.c_str();
-			condi_4 = (char *)var;
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+sizeof($3)+strlen(" -eq ")+strlen($1)+strlen(" ]") + 1);
+		string num = to_string($3);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -eq ");
+		strcat($$,num.c_str());
+		strcat($$," ]");
+		free($1);
 	}
 	|
 	ID MAYOR ID
@@ -594,14 +808,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -gt $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+strlen($1)+strlen(" -gt $")+strlen($3)+strlen(" ]") + 1);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -gt $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($1);
+		free($3);
 	}
 	|
 	ID MAYOR_I ID
@@ -617,14 +831,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -ge $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+strlen($1)+strlen(" -ge $")+strlen($3)+strlen(" ]") + 1);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -ge $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($1);
+		free($3);
 	}
 	|
 	ID MENOR ID
@@ -641,14 +855,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -lt $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+strlen($1)+strlen(" -lt $")+strlen($3)+strlen(" ]") + 1);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -lt $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($1);
+		free($3);
 	}
 	|
 	ID MENOR_I ID
@@ -664,14 +878,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -le $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+strlen($1)+strlen(" -le $")+strlen($3)+strlen(" ]") + 1);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -le $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($1);
+		free($3);
 	}
 	|
 	NUM MAYOR ID
@@ -681,17 +895,14 @@ condicional:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ ";
-			string s = to_string($1);
-      char const* var = s.c_str();
-			condi_2 = (char *)var;
-			condi_3 = " -gt $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ ")+sizeof($1)+strlen(" -gt $")+strlen($3)+strlen(" ]") + 1);
+		string num = to_string($1);
+		strcpy($$,"[ ");
+		strcat($$,num.c_str());
+		strcat($$," -gt $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($3);
 	}
 	|
 	NUM MAYOR_I ID
@@ -702,16 +913,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ ";
-			string s = to_string($1);
-      char const* var = s.c_str();
-			condi_2 = (char *)var;
-			condi_3 = " -ge $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ ")+sizeof($1)+strlen(" -ge $")+strlen($3)+strlen(" ]") + 1);
+		string num = to_string($1);
+		strcpy($$,"[ ");
+		strcat($$,num.c_str());
+		strcat($$," -ge $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($3);
 	}
 	|
 	NUM MENOR ID
@@ -722,15 +931,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0){
-			condi_1 = "[ ";
-			string s = to_string($1);
-      char const* var = s.c_str();
-			condi_2 = (char *)var;
-			condi_3 = " -lt $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ ")+sizeof($1)+strlen(" -lt $")+strlen($3)+strlen(" ]") + 1);
+		string num = to_string($1);
+		strcpy($$,"[ ");
+		strcat($$,num.c_str());
+		strcat($$," -lt $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($3);
 	}
 	|
 	NUM MENOR_I ID
@@ -741,16 +949,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ ";
-			string s = to_string($1);
-      char const* var= s.c_str();
-			condi_2 = (char *)var;
-			condi_3 = " -le $";
-			condi_4 = (char *)strdup($3);
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ ")+sizeof($1)+strlen(" -le $")+strlen($3)+strlen(" ]") + 1);
+		string num = to_string($1);
+		strcpy($$,"[ ");
+		strcat($$,num.c_str());
+		strcat($$," -le $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($3);
 	}
 	|
 	ID MAYOR NUM
@@ -761,16 +967,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -gt ";
-			string s = to_string($3);
-      char const* var = s.c_str();
-			condi_4 = (char *)var;
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+sizeof($3)+strlen(" -gt ")+strlen($1)+strlen(" ]") + 1);
+		string num = to_string($3);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -gt ");
+		strcat($$,num.c_str());
+		strcat($$," ]");
+		free($1);
 	}
 	|
 	ID MAYOR_I NUM
@@ -781,16 +985,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -ge ";
-			string s = to_string($3);
-      char const* var = s.c_str();
-			condi_4 = (char *)var;
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+sizeof($3)+strlen(" -ge ")+strlen($1)+strlen(" ]") + 1);
+		string num = to_string($3);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -ge ");
+		strcat($$,num.c_str());
+		strcat($$," ]");
+		free($1);
 	}
 	|
 	ID MENOR NUM
@@ -801,16 +1003,14 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -lt ";
-			string s = to_string($3);
-      char const* var = s.c_str();
-			condi_4 = (char *)var;
-			condi_5 = " ]";
-		}
+		$$ = (char *)malloc(strlen("[ $")+sizeof($3)+strlen(" -lt ")+strlen($1)+strlen(" ]") + 1);
+		string num = to_string($3);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -lt ");
+		strcat($$,num.c_str());
+		strcat($$," ]");
+		free($1);
 	}
 	|
 	ID MENOR_I NUM
@@ -821,16 +1021,73 @@ condicional:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
+		$$ = (char *)malloc(strlen("[ $")+sizeof($3)+strlen(" -le ")+strlen($1)+strlen(" ]") + 1);
+		string num = to_string($3);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -le ");
+		strcat($$,num.c_str());
+		strcat($$," ]");
+		free($1);
+	}
+	|
+	ID DIST ID
+	{
+		if(!esta_tabla_sim($1))
 		{
-			condi_1 = "[ $";
-			condi_2 = (char *)strdup($1);
-			condi_3 = " -le ";
-			string s = to_string($3);
-      char const* var = s.c_str();
-			condi_4 = (char *)var;
-			condi_5 = " ]";
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
 		}
+		else if(!esta_tabla_sim($3))
+		{
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		$$ = (char *)malloc(strlen("[ $")+strlen($1)+strlen(" -ne $")+strlen($3)+strlen(" ]") + 1);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -ne $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($1);
+		free($3);
+	}
+	|
+	ID DIST NUM
+	{
+		if(!esta_tabla_sim($1))
+		{
+			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		$$ = (char *)malloc(strlen("[ $")+sizeof($3)+strlen(" -ne ")+strlen($1)+strlen(" ]") + 1);
+		string num = to_string($3);
+		strcpy($$,"[ $");
+		strcat($$,$1);
+		strcat($$," -ne ");
+		strcat($$,num.c_str());
+		strcat($$," ]");
+		free($1);
+	}
+	|
+	NUM DIST ID
+	{
+		if(!esta_tabla_sim($3))
+		{
+			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
+			cantErrores++;
+		}
+
+		$$ = (char *)malloc(strlen("[ ")+sizeof($1)+strlen(" -ne $")+strlen($3)+strlen(" ]") + 1);
+		string num = to_string($1);
+		strcpy($$,"[ ");
+		strcat($$,num.c_str());
+		strcat($$," -ne $");
+		strcat($$,$3);
+		strcat($$," ]");
+		free($3);
 	};
 
 retornar:
@@ -841,6 +1098,8 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	RESERVADA ID PTOCOMA
@@ -856,6 +1115,8 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	RESERVADA PARENTESISABR NUM PARENTESISCERR PTOCOMA
@@ -865,6 +1126,8 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	}
 	|
 	RESERVADA PARENTESISABR ID PARENTESISCERR PTOCOMA
@@ -881,6 +1144,8 @@ retornar:
 			cout<<"Error en palabra reservada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
+		$$ = (char *)malloc(strlen(" ")+1);
+		strcpy($$," ");
 	};
 
 declaracion:
@@ -899,6 +1164,8 @@ declaracion:
 			tupla aux = make_tuple(tipo,id);
 			insertar_tabla_sim(aux);
 		}
+		$$ = (char *)malloc(strlen("")+1);
+		strcpy($$,"");
 
 		free($1);
 		free($2);
@@ -925,8 +1192,12 @@ declaracion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=%d\n",$2,$4);
+		$$ = (char *)malloc(strlen($2)+strlen("=")+sizeof($4)+strlen("\n")+ 1);
+		string num = to_string($4);
+		strcpy($$,$2);
+		strcat($$,"=");
+		strcat($$,num.c_str());
+		strcat($$,"\n");
 
 		free($1);
 		free($2);
@@ -954,11 +1225,15 @@ declaracion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s='$%s'\n",$2,$5);
+		$$ = (char *)malloc(strlen($2)+strlen("='")+strlen($5)+strlen("'\n")+ 1);
+		strcpy($$,$2);
+		strcat($$,"='");
+		strcpy($$,$5);
+		strcat($$,"'\n");
 
 		free($1);
 		free($2);
+		free($5);
 	}
 	|
 	TIPO ID IGUAL COMISIMPLE NUM COMISIMPLE PTOCOMA
@@ -982,8 +1257,12 @@ declaracion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s='%d'\n",$2,$5);
+		$$ = (char *)malloc(strlen($2)+strlen("='")+sizeof($5)+strlen("'\n")+ 1);
+		string num = to_string($5);
+		strcpy($$,$2);
+		strcat($$,"='");
+		strcat($$,num.c_str());
+		strcat($$,"'\n");
 
 		free($1);
 		free($2);
@@ -1018,11 +1297,15 @@ declaracion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=$%s\n",$2,$4);
+		$$ = (char *)malloc(strlen($2)+strlen("=$")+strlen($4)+strlen("\n") + 1);
+		strcpy($$,$2);
+		strcat($$,"=$");
+		strcat($$,$4);
+		strcat($$,"\n");
 
 		free($1);
 		free($2);
+		free($4);
 	};
 
 asignacion:
@@ -1046,8 +1329,14 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=$%s\n",$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=$")+strlen($3)+strlen("\n")+1);
+		strcpy($$,$1);
+		strcat($$,"=$");
+		strcat($$,$3);
+		strcat($$,"\n");
+		free($1);
+		free($3);
+
 	}
 	|
 	ID IGUAL NUM PTOCOMA
@@ -1064,8 +1353,14 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=%d\n",$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=")+sizeof($3)+strlen("\n")+ 1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$,"=");
+		strcat($$,num.c_str());
+		strcat($$,"\n");
+		free($1);
+
 	}
 	|
 	ID SUM_ASSIGN ID PTOCOMA
@@ -1088,8 +1383,16 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s + $%s`\n",$1,$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" + $")+strlen($3)+strlen("`\n")+1);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," + $");
+		strcat($$,$3);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
+
 	}
 	|
 	ID SUM_ASSIGN NUM PTOCOMA
@@ -1106,8 +1409,15 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s + %d`\n",$1,$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" + ")+sizeof($3)+strlen("`\n")+1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," + ");
+		strcat($$,num.c_str());
+		strcat($$,"`\n");
+		free($1);
 	}
 	|
 	ID SUB_ASSIGN ID PTOCOMA
@@ -1130,8 +1440,15 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s - $%s`\n",$1,$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" - $")+strlen($3)+strlen("`\n")+1);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," - $");
+		strcat($$,$3);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
 	}
 	|
 	ID SUB_ASSIGN NUM PTOCOMA
@@ -1147,9 +1464,15 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- TIPO incorrecto. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s - %d`\n",$1,$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" - ")+sizeof($3)+strlen("`\n")+1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," - ");
+		strcat($$,num.c_str());
+		strcat($$,"`\n");
+		free($1);
 	}
 	|
 	ID MUL_ASSIGN ID PTOCOMA
@@ -1172,8 +1495,15 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s \\* $%s`\n",$1,$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" \\* $")+strlen($3)+strlen("`\n")+1);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," \\* $");
+		strcat($$,$3);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
 	}
 	|
 	ID MUL_ASSIGN NUM PTOCOMA
@@ -1190,8 +1520,15 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s \\* %d`\n",$1,$1,$3);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" \\* ")+sizeof($3)+strlen("`\n")+1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," \\* ");
+		strcat($$,num.c_str());
+		strcat($$,"`\n");
+		free($1);
 	}
 	|
 	ID IGUAL suma PTOCOMA
@@ -1201,16 +1538,13 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
-
-			varasig = (char*) "";
-			varasigop = (char*) "";
-			varasig2 = (char*) "";
-			dolarasig = (char *) "";
-		}
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr ")+strlen($3)+strlen("`\n") + 1);
+		strcpy($$,$1);
+		strcat($$,"=`expr ");
+		strcat($$,$3);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
 	}
 	|
 	ID IGUAL resta PTOCOMA
@@ -1221,15 +1555,13 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
-
-			varasig = (char*) "";
-			varasigop = (char*) "";
-			varasig2 = (char*) "";
-			dolarasig = (char *) "";
-		}
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr ")+strlen($3)+strlen("`\n") + 1);
+		strcpy($$,$1);
+		strcat($$,"=`expr ");
+		strcat($$,$3);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
 	}
 	|
 	ID IGUAL multi PTOCOMA
@@ -1239,16 +1571,13 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
-
-			varasig = (char*) "";
-			varasigop = (char*) "";
-			varasig2 = (char*) "";
-			dolarasig = (char *) "";
-		}
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr ")+strlen($3)+strlen("`\n") + 1);
+		strcpy($$,$1);
+		strcat($$,"=`expr ");
+		strcat($$,$3);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
 	}
 	|
 	ID IGUAL div PTOCOMA
@@ -1258,16 +1587,13 @@ asignacion:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-		{
-			fprintf(yysalida, "%s=`expr %s%s%s%s%s`\n", $1, dolarasig, varasig, varasigop, dolarasig, varasig2);
-
-			varasig = (char*) "";
-			varasigop = (char*) "";
-			varasig2 = (char*) "";
-			dolarasig = (char *) "";
-		}
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr ")+strlen($3)+strlen("`\n") + 1);
+		strcpy($$,$1);
+		strcat($$,"=`expr ");
+		strcat($$,$3);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
 	}
 	|
 	ID IGUAL ID PORCENTAJE ID PTOCOMA
@@ -1289,8 +1615,16 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s %% $%s`\n",$1,$3,$5);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($3)+strlen(" % $")+strlen($5)+strlen("`\n") + 1);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$3);
+		strcat($$, " % $");
+		strcat($$,$5);
+		strcat($$,"`\n");
+		free($1);
+		free($3);
+		free($5);
 	}
 	|
 	ID IGUAL ID PORCENTAJE NUM PTOCOMA
@@ -1307,8 +1641,16 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s %% %d`\n",$1,$3,$5);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($3)+strlen(" % ")+sizeof($5)+strlen("`\n") + 1);
+		string num = to_string($5);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$3);
+		strcat($$, " % ");
+		strcat($$,num.c_str());
+		strcat($$,"`\n");
+		free($1);
+		free($3);
 	}
 	|
 	ID IGUAL NUM PORCENTAJE ID PTOCOMA
@@ -1325,8 +1667,17 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr %d %% $%s`\n",$1,$3,$5);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr ")+strlen($5)+strlen(" % $")+sizeof($3)+strlen("`\n") + 1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$,"=`expr ");
+		strcat($$,num.c_str());
+		strcat($$, " % $");
+		strcpy($$,$5);
+		strcat($$,"`\n");
+		free($1);
+		free($5);
+
 	}
 	|
 	ID IGUAL NUM PORCENTAJE NUM PTOCOMA
@@ -1337,8 +1688,16 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr %d %% %d`\n",$1,$3,$5);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr ")+sizeof($3)+strlen(" % ")+sizeof($5)+strlen("`\n") + 1);
+		string num1 = to_string($3);
+		string num2 = to_string($5);
+		strcpy($$,$1);
+		strcat($$,"=`expr ");
+		strcat($$,num1.c_str());
+		strcat($$, " % ");
+		strcat($$,num2.c_str());
+		strcat($$,"`\n");
+		free($1);
 	}
 	|
 	ID INC PTOCOMA
@@ -1349,8 +1708,13 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s + 1`\n",$1,$1);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" + 1")+strlen("`\n")+1);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," + 1");
+		strcat($$,"`\n");
+		free($1);
 	}
 	|
 	ID DEC PTOCOMA
@@ -1361,8 +1725,13 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s - 1`\n",$1,$1);
+		$$ = (char *)malloc(strlen($1)+strlen("=`expr $")+strlen($1)+strlen(" - 1")+strlen("`\n")+1);
+		strcpy($$,$1);
+		strcat($$,"=`expr $");
+		strcat($$,$1);
+		strcat($$," - 1");
+		strcat($$,"`\n");
+		free($1);
 	}
 	|
 	INC ID PTOCOMA
@@ -1373,8 +1742,14 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s + 1`\n",$2,$2);
+		$$ = (char *)malloc(strlen($2)+strlen("=`expr $")+strlen($2)+strlen(" + 1")+strlen("`\n")+1);
+		strcpy($$,$2);
+		strcat($$,"=`expr $");
+		strcat($$,$2);
+		strcat($$," + 1");
+		strcat($$,"`\n");
+		free($2);
+
 	}
 	|
 	DEC ID PTOCOMA
@@ -1385,8 +1760,13 @@ asignacion:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-			fprintf(yysalida,"%s=`expr $%s - 1`\n",$2,$2);
+		$$ = (char *)malloc(strlen($2)+strlen("=`expr $")+strlen($2)+strlen(" - 1")+strlen("`\n")+1);
+		strcpy($$,$2);
+		strcat($$,"=`expr $");
+		strcat($$,$2);
+		strcat($$," - 1");
+		strcat($$,"`\n");
+		free($2);
 	};
 
 suma:
@@ -1398,17 +1778,23 @@ suma:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			varasigop = (char *)" + ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($1)+strlen(" + $")+strlen($3) + 1);
+		strcpy($$,$1);
+		strcat($$," + $");
+		strcat($$,$3);
+		free($1);
 		free($3);
 	}
 	|
 	suma SUMA NUM
+	{
+		$$ = (char *)malloc(strlen($1)+strlen(" + ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$," + ");
+		strcat($$,num.c_str());
+		free($1);
+	}
 	|
 	ID SUMA ID
 	{
@@ -1423,19 +1809,25 @@ suma:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" + ";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" + $")+strlen($3) + 1);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," + $");
+		strcat($$,$3);
 		free($1);
 		free($3);
+
 	}
 	|
 	NUM SUMA NUM
+	{
+		$$ = (char *)malloc(sizeof($1)+strlen(" + ")+sizeof($3) + 1);
+		string num1 = to_string($1);
+		string num2 = to_string($3);
+		strcpy($$,num1.c_str());
+		strcat($$," + ");
+		strcat($$,num2.c_str());
+	}
 	|
 	ID SUMA NUM
 	{
@@ -1445,15 +1837,13 @@ suma:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" + ";
-      string s = to_string($3);
-      char const* var1= s.c_str();
-			varasig2 = (char *)var1;
-		}
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" + ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," + ");
+		strcat($$,num.c_str());
+		free($1);
 	}
 	|
 	NUM SUMA ID
@@ -1464,16 +1854,11 @@ suma:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			string s = to_string($1);
-			char const* var1 = s.c_str();
-			varasig = (char *)var1;
-			varasigop = (char *)" + ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($3)+strlen(" + $")+sizeof($1) + 1);
+		string num = to_string($1);
+		strcpy($$,num.c_str());
+		strcat($$," + $");
+		strcat($$,$3);
 		free($3);
 	};
 
@@ -1486,17 +1871,24 @@ resta:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			varasigop = (char *)" - ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($1)+strlen(" - $")+strlen($3) + 1);
+		strcpy($$,$1);
+		strcat($$," - $");
+		strcat($$,$3);
+		free($1);
 		free($3);
+
 	}
 	|
 	resta MENOS NUM
+	{
+		$$ = (char *)malloc(strlen($1)+strlen(" - ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$," - ");
+		strcat($$,num.c_str());
+		free($1);
+	}
 	|
 	ID MENOS ID
 	{
@@ -1512,19 +1904,24 @@ resta:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" - ";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" - $")+strlen($3) + 1);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," - $");
+		strcat($$,$3);
 		free($1);
 		free($3);
 	}
 	|
 	NUM MENOS NUM
+	{
+		$$ = (char *)malloc(sizeof($1)+strlen(" - ")+sizeof($3) + 1);
+		string num1 = to_string($1);
+		string num2 = to_string($3);
+		strcpy($$,num1.c_str());
+		strcat($$," - ");
+		strcat($$,num2.c_str());
+	}
 	|
 	ID MENOS NUM
 	{
@@ -1534,16 +1931,12 @@ resta:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" - ";
-      string s = to_string($3);
-      char const* var1= s.c_str();
-			varasig2 = (char *)var1;
-		}
-
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" - ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," - ");
+		strcat($$,num.c_str());
 		free($1);
 	}
 	|
@@ -1555,16 +1948,11 @@ resta:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			string s = to_string($1);
-			char const* var1 = s.c_str();
-			varasig = (char *)var1;
-			varasigop = (char *)" - ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($3)+strlen(" - $")+sizeof($1) + 1);
+		string num = to_string($1);
+		strcpy($$,num.c_str());
+		strcat($$," - $");
+		strcat($$,$3);
 		free($3);
 	};
 
@@ -1577,17 +1965,24 @@ multi:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			varasigop = (char *)" \\* ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($1)+strlen(" \\* $")+strlen($3) + 1);
+		strcpy($$,$1);
+		strcat($$," \\* $");
+		strcat($$,$3);
+		free($1);
 		free($3);
+
 	}
 	|
 	multi MULTI NUM
+	{
+		$$ = (char *)malloc(strlen($1)+strlen(" \\* ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$," \\* ");
+		strcat($$,num.c_str());
+		free($1);
+	}
 	|
 	ID MULTI ID
 	{
@@ -1602,19 +1997,24 @@ multi:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" \\* ";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" \\* $")+strlen($3) + 1);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," \\* $");
+		strcat($$,$3);
 		free($1);
 		free($3);
 	}
 	|
 	NUM MULTI NUM
+	{
+		$$ = (char *)malloc(sizeof($1)+strlen(" \\* ")+sizeof($3) + 1);
+		string num1 = to_string($1);
+		string num2 = to_string($3);
+		strcpy($$,num1.c_str());
+		strcat($$," \\* ");
+		strcat($$,num2.c_str());
+	}
 	|
 	ID MULTI NUM
 	{
@@ -1624,16 +2024,12 @@ multi:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" \\* ";
-      string s = to_string($3);
-      char const* var1= s.c_str();
-			varasig2 = (char *)var1;
-		}
-
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" \\* ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," \\* ");
+		strcat($$,num.c_str());
 		free($1);
 	}
 	|
@@ -1644,17 +2040,11 @@ multi:
 			cout<<endl<<"*ERROR: variable ->"<<$3<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-		{
-			string s = to_string($1);
-			char const* var1= s.c_str();
-			varasig = (char *)var1;
-			varasigop = (char *)" \\* ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($3)+strlen(" \\* $")+sizeof($1) + 1);
+		string num = to_string($1);
+		strcpy($$,num.c_str());
+		strcat($$," \\* $");
+		strcat($$,$3);
 		free($3);
 	};
 
@@ -1667,17 +2057,23 @@ div:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			varasigop = (char *)" / ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($1)+strlen(" / $")+strlen($3) + 1);
+		strcpy($$,$1);
+		strcat($$," / $");
+		strcat($$,$3);
+		free($1);
 		free($3);
 	}
 	|
 	div DIV NUM
+	{
+		$$ = (char *)malloc(strlen($1)+strlen(" / ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,$1);
+		strcat($$," / ");
+		strcat($$,num.c_str());
+		free($1);
+	}
 	|
 	ID DIV ID
 	{
@@ -1693,19 +2089,24 @@ div:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" / ";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" / $")+strlen($3) + 1);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," / $");
+		strcat($$,$3);
 		free($1);
 		free($3);
 	}
 	|
 	NUM DIV NUM
+	{
+		$$ = (char *)malloc(sizeof($1)+strlen(" / ")+sizeof($3) + 1);
+		string num1 = to_string($1);
+		string num2 = to_string($3);
+		strcpy($$,num1.c_str());
+		strcat($$," / ");
+		strcat($$,num2.c_str());
+	}
 	|
 	ID DIV NUM
 	{
@@ -1714,17 +2115,12 @@ div:
 			cout<<endl<<"*ERROR: variable ->"<<$1<<"<- NO declarada. Linea: "<<lineas<<"*"<<endl;
 			cantErrores++;
 		}
-
-		if(cantErrores == 0)
-		{
-			dolarasig = (char *)"$";
-			varasig = strdup($1);
-			varasigop = (char *)" / ";
-      string s = to_string($3);
-      char const* var1= s.c_str();
-			varasig2 = (char *)var1;
-		}
-
+		$$ = (char *)malloc(strlen("$")+strlen($1)+strlen(" / ")+sizeof($3) + 1);
+		string num = to_string($3);
+		strcpy($$,"$");
+		strcat($$,$1);
+		strcat($$," / ");
+		strcat($$,num.c_str());
 		free($1);
 	}
 	|
@@ -1736,17 +2132,13 @@ div:
 			cantErrores++;
 		}
 
-		if(cantErrores == 0)
-		{
-			string s = to_string($1);
-			char const* var1= s.c_str();
-			varasig = (char *)var1;
-			varasigop = (char *)" / ";
-			dolarasig = (char *)"$";
-			varasig2 = strdup($3);
-		}
-
+		$$ = (char *)malloc(strlen($3)+strlen(" / $")+sizeof($1) + 1);
+		string num = to_string($1);
+		strcpy($$,num.c_str());
+		strcat($$," / $");
+		strcat($$,$3);
 		free($3);
+
 	};
 
 %%
@@ -1890,7 +2282,6 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	yysalida = fopen("salida.sh", "w");
 	yyin = archivo;
 
 	cargar_reservada();
@@ -1903,7 +2294,6 @@ int main(int argc, char **argv)
 	eliminar_reservada_tipo();
 
 	fclose(yyin);
-	fclose(yysalida);
 
 	return 0;
 }

@@ -29,12 +29,12 @@ int main()
     {
       printf("%d No es primo1", X);
     }
-    else
+    if( X != 1)
     {
       printf("%d Es primo", X);
     }
   }
-  else
+  if (contador != 0)
   {
     printf("%d No es primo", X);
   }

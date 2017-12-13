@@ -1,4 +1,4 @@
-CXX = clang++ -std=c++11 -Wno-unused-value -Wno-deprecated -Wno-writable-strings
+CXX = clang++ -std=c++11 -Wno-unused-value -Wno-deprecated 
 
 BISON = bison -d
 

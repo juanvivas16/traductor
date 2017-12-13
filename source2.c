@@ -17,8 +17,7 @@ int main()
 
   while(i <= N)
   {
-    termino = a + b;
-    termino += c;
+    termino = a + b + c;
     printf(", %d", termino);
     a = b;
     b = c;
