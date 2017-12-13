@@ -73,55 +73,70 @@
 
 \section{Descripci\'on del problema}
 
-	Se plantea hacer una traducci\'on simple del lenguaje C a Bash, cabe destacar que se est\'a
-	pasando de un lenguaje fuertemente tipado a uno débilmente tipado.\\
+	Se plantea hacer una traducci\'on simple del lenguaje C a Bash, de lo cual es importante destacar que se est\'a
+	realizando la traducci\'on de un lenguaje fuertemente tipado a uno débilmente tipado.\\
 
-	El objetivo es traducir expresiones matem\'aticas sencillas, lectura de variables, impresiones
-	por pantalla y la estructura de decisión if y de repetición while.
+	El objetivo principal es traducir expresiones matem\'aticas sencillas, lectura de variables, impresiones por
+	pantalla y la estructura de decisión if y de repetición while. Todo esto pasando debidamente por an\'alisis 
+	l\'exico, sint\'actico y sem\'antico.
 
 \subsection{Alcance}
 
 	Lograr traducir expresiones matem\'aticas simples, tales como: sumas, restas, multiplicaciones,
-	divisiones y calculo de modulo. Las expresiones se limitaran a tener un solo tipo de operaci\'on. \\
+	divisiones y calculo de modulo. Para el desarrollo de dichas operaciones se acot\'o a operaciones que 
+	contendran solo dos operandos. \\
 
 	Se tendrán expresiones l\'ogicas las cuales sirven para las estructuras if y while, limitadas a un
 	solo operador l\'ogico.\\
 
-	Se leerá una sola variable por la entrada estándar y se acoto a 3 variables la cantidad que se pueden
-	imprimir.\\
+	Se leerá una sola variable por la entrada estándar y se acoto a 2 variables la cantidad que se pueden
+	imprimir por pantalla.\\
 
-	El tipo de datos en C a usar son int, float y char. A pesar de reconocer los flotantes, al momento de traducir
-	solo se tomara en cuenta su parte entera.
+	El tipo de datos en C a usar son int, float y char, empero, a pesar de reconocer el tipo de dato flotante,
+	al momento de traducir solo se tomar\'a en cuenta su parte entera.
 
 \subsection{Especificaci\'on del lenguaje fuente}
 
-	El lenguaje fuente es C reducido, limitado a operaciones matemáticas sencillas y las estructuras
-	if y while. Se reconocerá las bibliotecas que pueda tener y lo que este dentro de la función
-	main sin ningún par\'ametro. \\
+	El lenguaje fuente a ser traducido es el lenguaje C, el cual para fines pr\'acticos fue limitado a 
+	operaciones matemáticas sencillas y las estructuras de decisi\'n y repetici\'on if y while, respectivamente.
+	Tambi\'en son reconocidas las bibliotecas que contenga el c\'odigo fuente y la delcaraci\'on de la funci\'on
+	principal "main", para esta por fines pr\'acticos no son tomados en consideraci\'on los par\'ametro
+	que pueda contener (ejemplo argc o argv). \\
 
-	Tiene los tipos de datos entero, carácter y flotante. Se podrán declarar y asignar variables y valores.\\
+	Son considerados el manejos de los tipos de datos entero, carácter y flotante y mediante ellos
+	implementar la estructura de asignaci\'on a variables requeridas.\\
 
-	Se leerá una sola variable por la entrada estándar y la salida se acoto hasta 3 variables. \\
+	Para lectura de variables es utilizada la funci\'on "scanf", la cual es acotada a la lectura
+	de una sola variable y la impresi\'on por panatalla mediante la funci\'on "printf", acotandola a
+	una impresi\'on de un m\'aximo de 2 variables a la vez. \\
 
-	Todo lo demás no sera reconocido por nuestra gramática ni traducido.
+	Cualquier otra operaci\'on, comando, estructura y demás no sera reconocido por nuestra gramática 
+	ni traducido a el pr\'oximo lenguaje.
 
 \subsection{Especificaci\'on del lenguaje a traducir}
 
-El lenguaje de consola Bash (Bourne again shell) interpreta ordenes en una shell de Unix.
-Interpretara operaciones matemáticas simples, comparación de variables, lectura y escritura de variables
-por la entrada y salida estándar
+	El lenguaje de consola Bash (Bourne again shell) interpreta ordenes previamente desarrolladas en c\'odigo, y
+	ejecutadas mediante un script en una shell de Unix.\\
+
+	A ra\'iz de la traducci\'on proveniente del c\'odigo en el lenguaje C, se interpretara operaciones 
+	matemáticas simples de dos operandos m\'aximo, comparación de variables, lectura y escritura de variables
+	por la entrada y salida estándar, impresi\'on de un m\'aximo de 2 variables mediante pantalla 
+	y caputra de valores valores mediante la misma
 
 \section{Soluci\'on al problema planteado}
 
-La traducción se realiza a partir de verificar la correctitud del lenguaje fuente, de lo contrario
-no se realiza.\\
+	Se plantea realizar la traducción de un lenguaje a otro s\'olo si luego de realizarse el proceso de 
+	verificaci\'on de correctitud del lenguaje fuente \'este se ecuentra de manera correcta, de 
+	lo contrario no se realiza y se arroja un error adecuado al problema.\\
 
-Se divide en las siguiente secciones.
+	Para poder examinar la correctitud del c\'odigo fuente es necesario pasar a trav\'es de las siguientes 
+	secciones:
 
 \subsection{An\'alisis L\'exico}
 
-Se encarga de detectar todos los lexemas y pasarlos al análisis sintáctico como tokens.\\
-Contiene el siguiente conjunto de expresiones regulares:\\
+	Encargado de detectar todos los lexemas y dirigirlos al análisis sintáctico como tokens.\\
+	
+	Contiene el siguiente conjunto de expresiones regulares:\\
 
 \begin{lstlisting}
 
@@ -133,10 +148,10 @@ DIGITO [0-9]
 
 \end{lstlisting}
 
-Las cuales hacen match para detectar identificadores, tipos de datos, palabras reservadas y
-valores numéricos\\
+	Su funcionaliad radica en hacer "match" (verificar la coincidencia y correlaci\'on de tipos) para detectar 
+	identificadores, tipos de datos, palabras reservadas y valores numéricos\\
 
-También detecta el siguiente conjunto de caracteres: \\
+	Adicionalmente detecta el siguiente conjunto de caracteres: \\
 
 \begin{lstlisting}
 . ; { } ( ) < > ! = + - * / ^ : # &
@@ -144,18 +159,18 @@ También detecta el siguiente conjunto de caracteres: \\
 ++ -- /% , ' "
 \end{lstlisting}
 
-Cada expresión regular enviá un token al analizador sintáctico al igual que cada carácter antes descrito
-produce un token.\\
+	Cada expresión regular y cada uno de los caracteres previamentes descritos envian un token al analizador 
+	sintáctico, para pr\'oximamente ser utilizado.\\
 
-El analizador léxico también se encarga de eliminar del lenguaje fuente los espacios en blanco, saltos
-de linea y tabulaciones. Cuenta saltos de linea y rechaza aquellos caracteres que no coincidan con ningún
-patrón valido definido.
+	El analizador léxico también se encarga de eliminar del lenguaje fuente los espacios en blanco, saltos
+	de linea y tabulaciones. Cuenta saltos de linea y rechaza aquellos caracteres que no coincidan con ningún
+	patrón valido definido.
 
 
 \subsection{An\'alisis Sint\'actico}
 
-El análisis sintáctico se realiza a través de la siguiente gramática, el cual recibe los tokens
-y los agrupa de acuerdo a las reglas de producción de la gramática que se presenta a continuación
+	El análisis sintáctico se realiza a través de la siguiente gramática, el cual recibe los tokens obtenidos 
+	previamente y los agrupa de acuerdo a las reglas de producción de la gramática:
 
 \begin{lstlisting}
 
@@ -255,31 +270,45 @@ div:
 
 \end{lstlisting}
 
-La tabla de símbolos se implemento con un vector dinámico de tuplas, el cual agrupa el tipo de dato
-con su identificador.
+	Para la realizaci\'on del an\'alisis fue realizada la tabla de símbolos mediante un vector dinámico de 
+	tuplas, el cual se encarga de agrupar el tipo de dato con su identificador.
 
 
 \subsection{An\'alisis Sem\'antico}
 
-Se encarga de verificar que las palabras reservadas estén correctamente ubicadas dentro del lenguaje fuente.
-Las variables deben ser declaradas antes de ser usadas y al momento de hacer una asignación los
-tipos de datos sean iguales.
+	Este se encarga de verificar que las palabras reservadas se encuentren correctamente ubicadas dentro 
+	del lenguaje fuente, que las variables esten declaradas antes de ser usadas y al momento de hacer una 
+	asignación los tipos de datos  de ambas variables sean iguales.
 
 \subsection{Manejo de errores}
 
-Empieza en el análisis léxico, lleva la cuenta de las lineas que se van leyendo para poder decir
-en que linea se ubica un error en el caso de ser detectado, ademas de emitir un mensaje si no se llega
-a reconocer alguna palabra.\\
+	Inicia en el análisis léxico. En el se lleva cuenta de cantidad de lineas que se van leyendo con la finalidad de 
+	poder indicar en que linea se ubica un error en el caso de ser detectado, ademas de emitir un mensaje si 
+	no se llega a reconocer alguna palabra.\\
 
-El análisis semántico falla al momento de que no se pueda construir un árbol de derivación correcto
-a partir de la gramática definida. Se detiene la traducción y se avisa en que linea esta el error sintáctico\\
+	En el análisis semántico ocurre una falla al momento de que no se pueda construir un árbol de 
+	derivación correcto a partir de la gramática definida. Se detiene la traducción y se avisa en que linea 
+	esta el error sintáctico\\
 
-Al momento de revisar la semántica, se valida que todas las variables sean declaradas antes de invocarse,
-al momento de ser asignadas tengan el mismo tipo de dato y por ultimo que las palabras reservadas coincidan
-con su ubicación y uso dentro del lenguaje. De lo contrario se detiene la traducción y se emite un mensaje
-de error con la linea donde se encontró y la variable o palabra reservada involucrada.
+	Al momento de revisar la semántica, se valida que todas las variables sean declaradas antes de invocarse,
+	al momento de ser asignadas tengan el mismo tipo de dato y por ultimo que las palabras reservadas coincidan
+	con su ubicación y uso dentro del lenguaje, de lo contrario se detiene la traducción y se emite un mensaje
+	de error con la linea donde se encontró y la variable o palabra reservada involucrada.
 
+\section{Salida}
 
+	Luego de pasar por cada una de los pasos de verificación sin levantar ninguna alerta se procede a 
+	realizar la traducción según la estructura requerida del lenguaje requerido.\\
+	
+	En el caso particular de la traducci\'on de C a Bash toda la estructura de la cabecera en C pasa a ser una
+	línea de instrucci\'on, el scanf  cambia a read, un caso similar sucede para la impresi\'on
+	por pantalla,  el uso de tipos al realizar la declaraci\'on no es necesario, los condicionales dentro de 
+	las estructuras de decisi\'on y repetic\'on cambian, así como el denotar el fin de las mismas, usos de 
+	llaves caracteres epeciales, entre otras consideraciones que fueron tomadas para lograr que la traducci\'on 
+	se realice forma correcta para el lenguaje Bash y el c\'odigo se encuentre correcto para su ejecuci\'on.\\ 
+	
+	Luego de ejecutar el traductor al archivo en lenguaje C, se obtiene un archivo de nombre salida.sh, el cual es 
+	un script que puede ser ejecutado desde la terminal.
 
 
 
