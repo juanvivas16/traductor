@@ -1,11 +1,21 @@
+#include <hola>
+
 int main()
 {
 
-int a = 0;
-int x = 3;
+  int a = 0;
+  int b = 3;
+  int c = 3;
 
-  printf("hola?!!^^$$~``?? %d", a);
+  a = b % 1 ;
+  a = c % b;
+  a = a + b +us;
 
-  char xx = '$';
-  return 0;
+  if( 4 == a)
+  {
+    int hola;
+  }
+
+  return(a);
 }
+//check_estan_en_ts($1,$3);

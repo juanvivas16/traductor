@@ -1,10 +1,10 @@
-CXX = clang++ -std=c++11 -Wno-unused-value -Wno-deprecated 
+CXX = clang++ -std=c++11 -Wno-unused-value -Wno-deprecated
 
 BISON = bison -d
 
 FLEX = flex
 
-LATEX = pdflatex -synctex=1 -interaction=nonstopmode
+LATEX = pdflatex -synctex=1 -interaction=nonstopmode informe_compiladores.tex
 
 all: clean bison flex parser source1 source2 source3 flexdebug scanner
 
