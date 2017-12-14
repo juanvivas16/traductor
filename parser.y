@@ -58,7 +58,7 @@
 	int	ival;
 }
 
-%type<strval> suma resta multi div asignacion declaracion condicional retornar ambito
+%type<strval> suma resta multi div asignacion declaracion condicional retornar instr
 %type<strval> print scan estructura principal cuerpo cabecera codigo programa
 
 %token<strval> TIPO ID RESERVADA PRCVAL TEXTO
@@ -298,7 +298,7 @@ cuerpo:
 			strcpy($$," ");
 		}
 	}
-	| ambito cuerpo
+	| instr cuerpo
 	{
 		$$ = (char *)malloc(strlen($1)+strlen($2)+strlen("\n")+ 1);
 		strcpy($$,$1);
@@ -307,7 +307,7 @@ cuerpo:
 		free($1);
 		free($2);
 	}
-	| ambito
+	| instr
 	{
 		$$ = (char *)malloc(strlen($1)+strlen("\n")+ 1);
 		strcpy($$,$1);
@@ -315,7 +315,7 @@ cuerpo:
 		free($1);
 	};
 
-ambito:
+instr:
 	estructura LLAVEABR {/*agregar_ambito();*/} cuerpo LLAVECERR
 	{
 		char * copy = strdup($1);

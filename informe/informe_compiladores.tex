@@ -169,10 +169,10 @@ cuerpo:
 	asignacion cuerpo | asignacion | declaracion cuerpo | declaracion
 	| retornar cuerpo | retornar | scan cuerpo | scan
 	| print cuerpo | print | estructura cuerpo | estructura
-	| estructura LLAVEABR cuerpo LLAVECERR cuerpo
-	| estructura LLAVEABR cuerpo LLAVECERR
-	| RESERVADA LLAVEABR cuerpo LLAVECERR cuerpo
-	| RESERVADA LLAVEABR cuerpo LLAVECERR;
+	| instr cuerpo | instr;
+
+instr:
+	estructura LLAVEABR cuerpo LLAVECERR
 
 estructura:
 	RESERVADA PARENTESISABR condicional PARENTESISCERR;
@@ -260,7 +260,7 @@ div:
 	derivación correcto a partir de la gramática definida. Se detiene la traducción y se avisa en que linea esta el error sintáctico\\
 
 	Al momento de revisar la semántica, se valida que todas las variables sean declaradas antes de invocarse, al momento de ser asignadas tengan el mismo tipo de dato y por ultimo que las palabras reservadas coincidan con su ubicación y uso dentro del lenguaje, de lo contrario se detiene la traducción y se emite un mensaje de error con la linea donde se encontró y la variable o palabra reservada involucrada.\\
-	
+
 	En el caso de cualquier error, no se generara el código en el lenguaje objeto.
 
 \section{Salida}
